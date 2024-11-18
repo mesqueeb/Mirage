@@ -1,0 +1,24 @@
+{
+  "originHash" : "8cd0917f9b6d797e2cb03c786c1a6bfe55e15326f74c11598bcebf1cb4cd29b8",
+  "pins" : [
+    {
+      "identity" : "justsugar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mesqueeb/JustSugar",
+      "state" : {
+        "revision" : "85ae4de974e9ffd89b69e295c76db4d044e3f9fd",
+        "version" : "0.2.3"
+      }
+    },
+    {
+      "identity" : "mapsugar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mesqueeb/MapSugar",
+      "state" : {
+        "revision" : "d750dda1f3ceadbd85f2c1735664dd0f4b309066",
+        "version" : "0.1.0"
+      }
+    }
+  ],
+  "version" : 3
+}
