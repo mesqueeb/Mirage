@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct MButtonExamples: View {
+public struct MButton_Examples: View {
   let onTap: () -> Void
 
   public init(onTap: @escaping () -> Void) { self.onTap = onTap }

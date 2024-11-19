@@ -202,7 +202,7 @@ extension View {
 }
 
 #Preview(traits: .sizeThatFitsLayout) {
-  MButtonExamples(onTap: { print("clicked") }).padding()
+  MButton_Examples(onTap: { print("clicked") }).padding()
 
     #if os(iOS)
       .padding(.bottom, 350)

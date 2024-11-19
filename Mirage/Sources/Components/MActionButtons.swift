@@ -36,8 +36,8 @@ public struct MActionButton: Identifiable {
 }
 
 public struct MActionButtons: View {
-  let actionButtons: [MActionButton]
-  let dismissFn: DismissFn?
+  private let actionButtons: [MActionButton]
+  private let dismissFn: DismissFn?
 
   public init(actionButtons: [MActionButton], dismissFn: DismissFn? = nil) {
     self.actionButtons = actionButtons
@@ -61,4 +61,12 @@ public struct MActionButtons: View {
   }
 }
 
-#Preview { MActionButtons(actionButtons: []) }
+#Preview(traits: .sizeThatFitsLayout) {
+  MActionButtons_Examples(onTap: { print("Huzzah!") }).padding()
+
+    #if os(iOS)
+      .padding(.bottom, 350)
+    #elseif os(visionOS)
+      .glassBackgroundEffect()
+    #endif
+}
