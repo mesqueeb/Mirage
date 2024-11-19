@@ -17,9 +17,10 @@ struct ContentView: View {
       print("Mouse click sound file not found!")
       return
     }
-    do { try AVAudioPlayer(contentsOf: url).play() } catch {
-      print("Failed to play sound: \(error.localizedDescription)")
-    }
+    do {
+      playerMouseClick = try AVAudioPlayer(contentsOf: url)
+      playerMouseClick?.play()
+    } catch { print("Failed to play sound: \(error.localizedDescription)") }
   }
 
   @State private var component: MirageComponent? = nil
@@ -34,9 +35,13 @@ struct ContentView: View {
         } detail: {
           switch component {
           case .MButton:
-            ScrollView([.horizontal, .vertical]) {
+            #if !os(visionOS)
+              ScrollView([.horizontal, .vertical]) {
+                MButton_Examples(onTap: playMouseClick).padding()
+              }
+            #else
               MButton_Examples(onTap: playMouseClick).padding()
-            }
+            #endif
           case .MActionButtons: MActionButtons_Examples(onTap: playMouseClick).padding()
           case .MLink: MLink_Examples().padding()
           case .none: Text("Select a component to see examples").padding()

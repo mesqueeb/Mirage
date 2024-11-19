@@ -10,7 +10,7 @@ public struct MButton_Examples: View {
   @State var isDisabled = false
 
   public var body: some View {
-    Grid {
+    Grid(horizontalSpacing: Space.md) {
       GridRow {
         VStack {
           Toggle("Active", isOn: $isActive)
@@ -163,7 +163,7 @@ public struct MButton_Examples: View {
       GridRow { Spacer(minLength: Space.xxs) }
       GridRow {
         Text("Automatic")
-        VStack(spacing: Space.sm) {
+        VStack(spacing: Space.md) {
           MButton(
             action: onTap,
             kind: .automatic,
@@ -190,7 +190,7 @@ public struct MButton_Examples: View {
             isDisabled: isDisabled
           )
         }
-        VStack(spacing: Space.sm) {
+        VStack(spacing: Space.md) {
           MButton(
             action: onTap,
             kind: .automatic,
@@ -201,7 +201,7 @@ public struct MButton_Examples: View {
           MButton(action: onTap, kind: .automatic, label: "click me", isBusy: true)
           MButton(action: onTap, kind: .automatic, icon: "play.fill", isBusy: true)
         }
-        VStack(spacing: Space.sm) {
+        VStack(spacing: Space.md) {
           MButton(
             action: onTap,
             kind: .automatic,
@@ -212,7 +212,7 @@ public struct MButton_Examples: View {
           MButton(action: onTap, kind: .automatic, label: "click me", isActive: true)
           MButton(action: onTap, kind: .automatic, icon: "play.fill", isActive: true)
         }
-        VStack(spacing: Space.sm) {
+        VStack(spacing: Space.md) {
           MButton(
             action: onTap,
             kind: .automatic,

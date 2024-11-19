@@ -21,23 +21,32 @@ public struct MLink: View {
     self.content = content()
   }
 
+  /// for tinting the background colour on macOS only
+  @State private var isHovering = false
+
   public var body: some View {
     if isShown {
       Link(destination: URL(string: url)!) {
-        Label {
-          if let label { Text(label) }
-        } icon: {
-          if let icon { Image(systemName: icon) }
+        HStack {
+          Label {
+            if let label { Text(label) }
+          } icon: {
+            if let icon { Image(systemName: icon) }
+          }
+          content
         }
-        content
+        #if os(visionOS)
+          .padding(.horizontal, (label != nil ? Space.md : Space.sm) + 4)
+          .padding(.vertical, Space.sm + 4).background(Color.accentColor.opacity(0.1))
+        #endif
       }
       #if os(visionOS)
-        .padding(.horizontal, Space.sm).padding(.vertical, Space.xs).foregroundStyle(Color.primary)
-        .background(Color.accentColor.opacity(0.2))
+        .padding(-6).clipShape(RoundedRectangle(cornerRadius: Space.sm))
+        .foregroundStyle(Color.primary)
       #elseif os(iOS) || os(macOS)
-        .foregroundStyle(Color.accentColor)
+        .foregroundStyle(Color.accentColor.opacity(isHovering ? 0.8 : 1.0))
+        .onHover { isHovering in withAnimation { self.isHovering = isHovering } }
       #endif
-      .clipShape(RoundedRectangle(cornerRadius: Space.sm))
     }
   }
 }

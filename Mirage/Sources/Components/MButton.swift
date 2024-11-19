@@ -58,7 +58,6 @@ public struct MButton: View {
           if let icon {
             Image(systemName: self.isBusy ? "progress.indicator" : icon)
               .mButtonIconModifiers(self.isBusy, spinnerSpeed)
-              .contentTransition(.symbolEffect(.replace))
           } else if self.isBusy {
             Image(systemName: "progress.indicator").mButtonIconModifiers(self.isBusy, spinnerSpeed)
           }
@@ -70,6 +69,7 @@ public struct MButton: View {
           isActive: isActive,
           hasLabel: label != nil
         )
+        .contentTransition(.symbolEffect(.replace))
       }
       .mButtonModifiers(kind, color, isActive: isActive, isHovering: isHovering)
       .onHover { isHovering in withAnimation { self.isHovering = isHovering } }
@@ -91,6 +91,10 @@ extension Image {
       self.symbolEffect(.rotate.wholeSymbol, options: .repeat(.continuous))
         // TODO: without `.font(.callout)` for some reason the icon does not animate
         .font(.callout).rotationEffect(.degrees(spinnerSpeed * 90))
+
+        #if os(visionOS)
+          .offset(x: 2)
+        #endif
     } else {
       self
     }
@@ -107,13 +111,17 @@ extension Label {
   ) -> some View {
     switch kind {
     case .primary, .secondary, .text:
-      self.frame(minWidth: hasLabel ? 100 : nil, minHeight: 20)
-
-        #if os(visionOS)
-          .padding(.horizontal, 20).padding(.vertical, 12)
-        #else
-          .padding(.horizontal, 8).padding(.vertical, 4)
-        #endif
+      #if os(visionOS)
+        self.padding(.horizontal, (hasLabel ? Space.lg : Space.md) + 4)
+          .padding(.vertical, Space.md + 4).frame(minWidth: hasLabel ? 100 : 20, minHeight: 20)
+      #elseif os(iOS)
+        self.padding(.horizontal, (hasLabel ? Space.sm : Space.xs)).padding(.vertical, Space.xs)
+          .frame(minWidth: hasLabel ? 100 : 20, minHeight: 20)
+      #elseif os(macOS)
+        self.padding(.horizontal, (hasLabel ? Space.sm : Space.xs)).padding(.vertical, Space.xs)
+          .frame(minWidth: hasLabel ? 100 : 20, minHeight: 20)
+          .contentShape(RoundedRectangle(cornerRadius: Space.xs))
+      #endif
 
     case .automatic: self
     }
@@ -130,39 +138,41 @@ extension Label {
     switch kind {
     case .primary:
       #if os(visionOS)
-        self.buttonStyle(PlainButtonStyle()).background(color.opacity(1.0)).cornerRadius(Space.sm)
-          .activeOutline(isActive, color)
+        self.buttonStyle(PlainButtonStyle()).background(color.opacity(1.0)).padding(-6)
+          .clipShape(RoundedRectangle(cornerRadius: Space.sm)).activeOutline(isActive, color)
       #elseif os(iOS)
         self.buttonStyle(BorderedProminentButtonStyle()).tint(color.opacity(isHovering ? 0.8 : 1.0))
           .activeOutline(isActive, color)
       #elseif os(macOS)
-        self.buttonStyle(BorderlessButtonStyle()).foregroundStyle(Color.primary).colorInvert()
-          .background(color.opacity(1.0)).cornerRadius(Space.xs).activeOutline(isActive, color)
+        self.buttonStyle(PlainButtonStyle()).foregroundStyle(Color.white)
+          .background(color.opacity(isHovering ? 0.8 : 1.0))
+          .clipShape(RoundedRectangle(cornerRadius: Space.xs)).activeOutline(isActive, color)
       #endif
 
     case .secondary:
       #if os(visionOS)
-        self.buttonStyle(PlainButtonStyle()).background(color.opacity(0.4)).cornerRadius(Space.sm)
-          .activeOutline(isActive, color)
+        self.buttonStyle(PlainButtonStyle()).background(color.opacity(0.4)).padding(-6)
+          .clipShape(RoundedRectangle(cornerRadius: Space.sm)).activeOutline(isActive, color)
       #elseif os(iOS)
         self.buttonStyle(BorderedButtonStyle()).tint(color.opacity(isHovering ? 0.8 : 1))
-          .activeOutline(isActive, color)
+          .foregroundStyle(Color.primary).activeOutline(isActive, color)
       #elseif os(macOS)
-        self.buttonStyle(BorderlessButtonStyle()).foregroundStyle(color)
-          .background(color.opacity(0.1)).cornerRadius(Space.xs).activeOutline(isActive, color)
+        self.buttonStyle(PlainButtonStyle()).foregroundStyle(Color.primary)
+          .background(color.opacity(isHovering ? 0.3 : 0.1))
+          .clipShape(RoundedRectangle(cornerRadius: Space.xs)).activeOutline(isActive, color)
       #endif
 
     case .text:
       #if os(visionOS)
         self.buttonStyle(PlainButtonStyle())
-          .background(isActive ? color.opacity(0.1) : color.opacity(0.0)).cornerRadius(Space.sm)
-          .activeOutline(isActive, color)
+          .background(isActive ? color.opacity(0.1) : color.opacity(0.0)).padding(-6)
+          .clipShape(RoundedRectangle(cornerRadius: Space.sm)).activeOutline(isActive, color)
       #elseif os(iOS)
         self.buttonStyle(BorderlessButtonStyle()).tint(color.opacity(isHovering ? 0.8 : 1))
           .activeOutline(isActive, color)
       #elseif os(macOS)
-        self.buttonStyle(BorderlessButtonStyle()).foregroundStyle(color).cornerRadius(Space.xs)
-          .activeOutline(isActive, color)
+        self.buttonStyle(PlainButtonStyle()).foregroundStyle(color.opacity(isHovering ? 0.8 : 1.0))
+          .clipShape(RoundedRectangle(cornerRadius: Space.xs)).activeOutline(isActive, color)
       #endif
 
     case .automatic: self
