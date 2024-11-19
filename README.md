@@ -45,4 +45,4 @@ The rendered documentation can be found here: [swiftpackageindex.com/mesqueeb/Mi
 
 ### iOS / iPadOS / macOS
 
-![](.github/mlink_macOS.png)
+![](.github/mlink_macos.png)
