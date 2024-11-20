@@ -1,6 +1,6 @@
 import SwiftUI
 
-public enum ButtonKind: String { case primary, secondary, text, automatic }
+public enum ButtonKind: String, Codable, Sendable { case primary, secondary, text, automatic }
 
 public struct MButton: View {
   let isShown: Bool

@@ -1,6 +1,6 @@
 import Foundation
 
-public enum Space {
+public enum Space: Sendable {
   public static let none: CGFloat = 0
   public static let xxs: CGFloat = 2
   public static let xs: CGFloat = 4
