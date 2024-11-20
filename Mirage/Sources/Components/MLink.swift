@@ -44,7 +44,7 @@ public struct MLink: View {
         .padding(-6).clipShape(RoundedRectangle(cornerRadius: Space.sm))
         .foregroundStyle(Color.primary)
       #elseif os(iOS) || os(macOS)
-        .foregroundStyle(Color.accentColor.opacity(isHovering ? 0.8 : 1.0))
+        .foregroundStyle(Color.accentColor.opacity(isHovering ? 0.7 : 1.0))
         .onHover { isHovering in withAnimation { self.isHovering = isHovering } }
       #endif
     }
