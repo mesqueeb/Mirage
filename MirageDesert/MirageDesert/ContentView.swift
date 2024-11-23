@@ -3,7 +3,7 @@ import Mirage
 import AVFoundation
 
 public enum MirageComponent: String, Codable, CaseIterable, Identifiable, Hashable {
-  case MButton, MActionButtons, MLink
+  case MButton, MActionButtons, MLink, MHorizontalRule, Typography
 
   public var id: String { self.rawValue }
 }
@@ -23,7 +23,7 @@ struct ContentView: View {
     } catch { print("Failed to play sound: \(error.localizedDescription)") }
   }
 
-  @State private var component: MirageComponent? = nil
+  @State private var component: MirageComponent? = .MButton
 
   var body: some View {
     TabView {
@@ -44,6 +44,8 @@ struct ContentView: View {
             #endif
           case .MActionButtons: MActionButtons_Examples(onTap: playMouseClick).padding()
           case .MLink: MLink_Examples().padding()
+          case .MHorizontalRule: MHorizontalRule_Examples().padding()
+          case .Typography: ScrollView { Typography_Examples().padding() }
           case .none: Text("Select a component to see examples").padding()
           }
         }
