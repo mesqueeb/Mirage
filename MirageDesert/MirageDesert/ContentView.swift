@@ -8,6 +8,18 @@ public enum MirageComponent: String, Codable, CaseIterable, Identifiable, Hashab
   public var id: String { self.rawValue }
 }
 
+struct MaybeScrollView<Content: View>: View {
+  private let useScrollView: Bool
+  private let content: Content
+  public init(useScrollView: Bool, @ViewBuilder content: @escaping () -> Content) {
+    self.useScrollView = useScrollView
+    self.content = content()
+  }
+  public var body: some View {
+    if useScrollView { ScrollView([.horizontal, .vertical]) { content } } else { content }
+  }
+}
+
 struct ContentView: View {
   // Keep an audio player instance alive for the sound
   @State private var playerMouseClick: AVAudioPlayer?
@@ -24,29 +36,29 @@ struct ContentView: View {
   }
 
   @State private var component: MirageComponent? = .MButton
+  @State private var useScrollView: Bool = false
 
   var body: some View {
     TabView {
       Tab("Components", systemImage: "square.grid.2x2") {
         NavigationSplitView {
+          Toggle("ScrollView", isOn: $useScrollView).padding(.bottom, Space.md)
           List(MirageComponent.allCases, id: \.self, selection: $component) { component in
             Text(component.rawValue)
           }
         } detail: {
-          switch component {
-          case .MButton:
-            #if !os(visionOS)
-              ScrollView([.horizontal, .vertical]) {
-                MButton_Examples(onTap: playMouseClick).padding()
+          MaybeScrollView(useScrollView: useScrollView) {
+            VStack {
+              switch component {
+              case .MButton: MButton_Examples(onTap: playMouseClick)
+              case .MActionButtons: MActionButtons_Examples(onTap: playMouseClick)
+              case .MLink: MLink_Examples()
+              case .MHorizontalRule: MHorizontalRule_Examples()
+              case .Typography: Typography_Examples()
+              case .none: Text("Select a component to see examples")
               }
-            #else
-              MButton_Examples(onTap: playMouseClick).padding()
-            #endif
-          case .MActionButtons: MActionButtons_Examples(onTap: playMouseClick).padding()
-          case .MLink: MLink_Examples().padding()
-          case .MHorizontalRule: MHorizontalRule_Examples().padding()
-          case .Typography: ScrollView { Typography_Examples().padding() }
-          case .none: Text("Select a component to see examples").padding()
+            }
+            .padding()
           }
         }
       }
