@@ -2,6 +2,17 @@ import SwiftUI
 
 public enum ButtonKind: String, Codable, Sendable { case primary, secondary, text, automatic }
 
+#if os(visionOS)
+  let sizeModifier: CGFloat = 1.5
+#elseif os(iOS)
+  let sizeModifier: CGFloat = 1
+#elseif os(macOS)
+  let sizeModifier: CGFloat = 0.75
+#endif
+let defaultCornerRadius = Space.sm * sizeModifier
+let defaultPadding = Space.sm * sizeModifier
+let contentMinHeightWidth = Space.lg * sizeModifier
+
 public struct MButton: View {
   let isShown: Bool
   let action: () -> Void
@@ -47,13 +58,16 @@ public struct MButton: View {
       Button {
         if isBusy {
           // Accelerate the spinner instead of executing the action
-          withAnimation(.easeIn(duration: 0.2)) { spinnerSpeed += 1 }
+          withAnimation(.easeIn(duration: 0.5)) { spinnerSpeed += 1 }
         } else {
           self.action()
         }
       } label: {
         Label {
-          if let label { Text(label).padding(.horizontal, 4) }
+          if let label {
+            Text(label).multilineTextAlignment(.center).padding(.horizontal, 4)
+              .frame(minWidth: contentMinHeightWidth, minHeight: contentMinHeightWidth)
+          }
         } icon: {
           if let icon {
             Image(systemName: self.isBusy ? "progress.indicator" : icon)
@@ -69,12 +83,17 @@ public struct MButton: View {
           isActive: isActive,
           hasLabel: label != nil
         )
+        // TODO: ↓ This doesn't work because we use `mButtonIconModifiers`, but other attempts at making the icon rotate continuously all failed...
         .contentTransition(.symbolEffect(.replace))
       }
-      .mButtonModifiers(kind, color, isActive: isActive, isHovering: isHovering)
-      .onHover { isHovering in withAnimation { self.isHovering = isHovering } }
-
-      // for some reason macOS BorderlessButton() style has no default disabled style
+      .mButtonModifiers(
+        kind,
+        color,
+        isActive: isActive,
+        isHovering: isHovering,
+        hasLabel: label != nil
+      )
+      .onHover { isHovering in withAnimation { self.isHovering = isHovering } }  //
       #if os(macOS)
         .opacity(isDisabled ? 0.7 : 1.0)
       #endif
@@ -88,15 +107,19 @@ public struct MButton: View {
 extension Image {
   @ViewBuilder func mButtonIconModifiers(_ isBusy: Bool, _ spinnerSpeed: Double) -> some View {
     if isBusy {
-      self.symbolEffect(.rotate.wholeSymbol, options: .repeat(.continuous))
-        // TODO: without `.font(.callout)` for some reason the icon does not animate
-        .font(.callout).rotationEffect(.degrees(spinnerSpeed * 90))
-
+      self.fontWeight(.medium).symbolEffect(.rotate.wholeSymbol, options: .repeat(.continuous))
+        // TODO: without `.fontWeight(.medium)` for some reason the icon does not animate
+        .rotationEffect(.degrees(spinnerSpeed * 90))
+        .frame(minWidth: contentMinHeightWidth, minHeight: contentMinHeightWidth)  //
         #if os(visionOS)
-          .offset(x: 2)
+          .offset(x: 2)  // there's a weird visual offset without this
         #endif
     } else {
-      self
+      self.fontWeight(.medium)
+        .frame(minWidth: contentMinHeightWidth, minHeight: contentMinHeightWidth)  //
+        #if os(visionOS)
+          .offset(x: 2)  // there's a weird visual offset without this
+        #endif
     }
   }
 }
@@ -111,18 +134,10 @@ extension Label {
   ) -> some View {
     switch kind {
     case .primary, .secondary, .text:
-      #if os(visionOS)
-        self.padding(.horizontal, (hasLabel ? Space.lg : Space.md) + 4)
-          .padding(.vertical, Space.md + 4).frame(minWidth: hasLabel ? 100 : 20, minHeight: 20)
-      #elseif os(iOS)
-        self.padding(.horizontal, (hasLabel ? Space.sm : Space.xs)).padding(.vertical, Space.xs)
-          .frame(minWidth: hasLabel ? 100 : 20, minHeight: 20)
-      #elseif os(macOS)
-        self.padding(.horizontal, (hasLabel ? Space.sm : Space.xs)).padding(.vertical, Space.xs)
-          .frame(minWidth: hasLabel ? 100 : 20, minHeight: 20)
-          .contentShape(RoundedRectangle(cornerRadius: Space.xs))
-      #endif
-
+      self.padding(.horizontal, (hasLabel ? (defaultPadding * 2) : defaultPadding))
+        // min width and height of 30 ensures at the very least the button will be square (for this SF Symbols like "figure.stand")
+        .padding(.vertical, defaultPadding).frame(minWidth: hasLabel ? 120 : 0, minHeight: 0)
+        .contentShape(RoundedRectangle(cornerRadius: defaultCornerRadius))
     case .automatic: self
     }
   }
@@ -133,50 +148,59 @@ extension Label {
     _ kind: ButtonKind,
     _ color: Color,
     isActive: Bool,
-    isHovering: Bool
+    isHovering: Bool,
+    hasLabel: Bool
   ) -> some View {
     switch kind {
     case .primary:
-      #if os(visionOS)
-        self.buttonStyle(PlainButtonStyle()).background(color.opacity(1.0)).padding(-6)
-          .clipShape(RoundedRectangle(cornerRadius: Space.sm)).activeOutline(isActive, color)
-      #elseif os(iOS)
-        self.buttonStyle(BorderedProminentButtonStyle()).tint(color.opacity(isHovering ? 0.8 : 1.0))
-          .activeOutline(isActive, color)
-      #elseif os(macOS)
-        self.buttonStyle(PlainButtonStyle()).foregroundStyle(Color.white)
-          .background(color.opacity(isHovering ? 0.8 : 1.0))
-          .clipShape(RoundedRectangle(cornerRadius: Space.xs)).activeOutline(isActive, color)
-      #endif
+      self.buttonStyle(PlainButtonStyle()).foregroundStyle(Color.white)
+        .background(color.opacity(isHovering ? 0.8 : 1.0))  //
+        #if os(visionOS)
+          .mButtonVisionOSFixes(hasLabel: hasLabel)
+        #endif
+        .clipShape(RoundedRectangle(cornerRadius: defaultCornerRadius))
+        .activeOutline(isActive, color)
 
     case .secondary:
-      #if os(visionOS)
-        self.buttonStyle(PlainButtonStyle()).background(color.opacity(0.4)).padding(-6)
-          .clipShape(RoundedRectangle(cornerRadius: Space.sm)).activeOutline(isActive, color)
-      #elseif os(iOS)
-        self.buttonStyle(BorderedButtonStyle()).tint(color.opacity(isHovering ? 0.8 : 1))
-          .foregroundStyle(Color.primary).activeOutline(isActive, color)
-      #elseif os(macOS)
-        self.buttonStyle(PlainButtonStyle()).foregroundStyle(Color.primary)
-          .background(color.opacity(isHovering ? 0.3 : 0.1))
-          .clipShape(RoundedRectangle(cornerRadius: Space.xs)).activeOutline(isActive, color)
-      #endif
+      self.buttonStyle(PlainButtonStyle()).foregroundStyle(Color.primary)  //
+        #if os(visionOS)
+          // background a bit less opaque on visionOS
+          .background(color.opacity(0.4)).mButtonVisionOSFixes(hasLabel: hasLabel)
+        #else
+          // background quite opaque on the rest
+          .background(color.opacity(isHovering ? 0.35 : 0.2))
+        #endif
+        .clipShape(RoundedRectangle(cornerRadius: defaultCornerRadius))
+        .activeOutline(isActive, color)
 
     case .text:
-      #if os(visionOS)
-        self.buttonStyle(PlainButtonStyle())
-          .background(isActive ? color.opacity(0.1) : color.opacity(0.0)).padding(-6)
-          .clipShape(RoundedRectangle(cornerRadius: Space.sm)).activeOutline(isActive, color)
-      #elseif os(iOS)
-        self.buttonStyle(BorderlessButtonStyle()).tint(color.opacity(isHovering ? 0.8 : 1))
-          .activeOutline(isActive, color)
-      #elseif os(macOS)
-        self.buttonStyle(PlainButtonStyle()).foregroundStyle(color.opacity(isHovering ? 0.8 : 1.0))
-          .clipShape(RoundedRectangle(cornerRadius: Space.xs)).activeOutline(isActive, color)
-      #endif
+      self.buttonStyle(PlainButtonStyle())  //
+        #if os(visionOS)
+          // primary color on visionOS
+          .foregroundStyle(Color.primary.opacity(isHovering ? 0.8 : 1.0))
+          .mButtonVisionOSFixes(hasLabel: hasLabel)
+        #else
+          // accentColor on the rest
+          .foregroundStyle(color.opacity(isHovering ? 0.8 : 1.0))
+        #endif
+        .clipShape(RoundedRectangle(cornerRadius: defaultCornerRadius))
+        .activeOutline(isActive, color)
 
     case .automatic: self
     }
+  }
+}
+
+@MainActor extension View {
+  /// on visionOS the button won't respect the inner label's min height/width so to compensate
+  /// we need an extra frame on the outer button and negative padding to make the hover spotlight
+  /// look nicely
+  @ViewBuilder func mButtonVisionOSFixes(hasLabel: Bool) -> some View {
+    self.padding(-8)
+      .frame(
+        minWidth: hasLabel ? 120 : contentMinHeightWidth + defaultPadding,
+        minHeight: contentMinHeightWidth + defaultPadding
+      )
   }
 }
 
@@ -189,16 +213,10 @@ public struct ActiveOutlineModifier: ViewModifier {
     self.color = color
   }
 
-  #if os(visionOS) || os(iOS)
-    let cornerRadius: CGFloat = 10
-  #elseif os(macOS)
-    let cornerRadius: CGFloat = 6
-  #endif
-
   public func body(content: Content) -> some View {
     content.padding(1.5)
       .overlay(
-        RoundedRectangle(cornerRadius: cornerRadius)
+        RoundedRectangle(cornerRadius: defaultCornerRadius + 2)
           .stroke(isActive ? color.opacity(0.3) : Color.clear, lineWidth: 3)
           .animation(.easeInOut(duration: 0.2), value: isActive)
       )
