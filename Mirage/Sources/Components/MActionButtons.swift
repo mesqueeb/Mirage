@@ -10,6 +10,7 @@ public typealias DismissFn = () -> Void
 /// Eg. a component that defines a `[ActionButton]` prop, based on which it will render button components in its body.
 public struct MActionButton: Identifiable, Sendable {
   public var action: @Sendable (DismissFn?) -> Void
+  public var kind: ButtonKind
   public var label: LocalizedStringResource?
   public var icon: String?
   public var isActive: Bool
@@ -19,6 +20,7 @@ public struct MActionButton: Identifiable, Sendable {
 
   public init(
     action: @escaping @Sendable (DismissFn?) -> Void,
+    kind: ButtonKind = .automatic,
     label: LocalizedStringResource? = nil,
     icon: String? = nil,
     isActive: Bool = false,
@@ -27,6 +29,7 @@ public struct MActionButton: Identifiable, Sendable {
     id: UUID = UUID()
   ) {
     self.action = action
+    self.kind = kind
     self.label = label
     self.icon = icon
     self.isActive = isActive
@@ -50,6 +53,7 @@ public struct MActionButtons: View {
       ForEach(actionButtons) { actionButton in
         MButton(
           action: { actionButton.action(self.dismissFn) },
+          kind: actionButton.kind,
           label: actionButton.label,
           icon: actionButton.icon,
           isActive: actionButton.isActive,
