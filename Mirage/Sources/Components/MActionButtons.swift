@@ -8,30 +8,31 @@ public typealias DismissFn = () -> Void
 ///
 /// Used for cases where buttons are dynamically defined in a parent.
 /// Eg. a component that defines a `[ActionButton]` prop, based on which it will render button components in its body.
-public struct MActionButton: Identifiable {
-  public let id: UUID
-  public let action: (DismissFn?) -> Void
-  public let label: LocalizedStringResource?
-  public let icon: String?
-  public let isActive: Bool
-  public let isBusy: Bool
-  public let isDisabled: Bool
+public struct MActionButton: Identifiable, Sendable {
+  public var action: @Sendable (DismissFn?) -> Void
+  public var label: LocalizedStringResource?
+  public var icon: String?
+  public var isActive: Bool
+  public var isBusy: Bool
+  public var isDisabled: Bool
+  public var id: UUID
 
   public init(
-    action: @escaping (DismissFn?) -> Void,
+    action: @escaping @Sendable (DismissFn?) -> Void,
     label: LocalizedStringResource? = nil,
     icon: String? = nil,
     isActive: Bool = false,
     isBusy: Bool = false,
-    isDisabled: Bool = false
+    isDisabled: Bool = false,
+    id: UUID = UUID()
   ) {
-    self.id = UUID()
     self.action = action
     self.label = label
     self.icon = icon
     self.isActive = isActive
     self.isBusy = isBusy
     self.isDisabled = isDisabled
+    self.id = id
   }
 }
 
