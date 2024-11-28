@@ -10,7 +10,7 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmesqueeb%2FMirage%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/mesqueeb/Mirage)
 
 ```
-.package(url: "https://github.com/mesqueeb/Mirage", from: "0.2.3")
+.package(url: "https://github.com/mesqueeb/Mirage", from: "0.2.4")
 ```
 
 A SwiftUI component library.
