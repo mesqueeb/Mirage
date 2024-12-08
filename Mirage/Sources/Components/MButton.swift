@@ -125,21 +125,28 @@ public struct MButton: View {
             }
           }
         } icon: {
-          if let icon {
-            Image(systemName: isBusy ? "progress.indicator" : icon)
-              .mButtonIconModifiers(minWidthHeight, isBusy, spinnerSpeed)  //
+          if let iconName = isBusy ? "progress.indicator" : icon {
+            Image(systemName: iconName)
+              .if(labelKind == .iconOnly) { view in view.resizable().aspectRatio(contentMode: .fit)
+              }
+              // without `.fontWeight(.medium)` for some reason the icon does not animate
+              .fontWeight(.medium)  //
+              .if(isBusy) { view in
+                view.symbolEffect(.rotate.wholeSymbol, options: .repeat(.continuous))
+                  .rotationEffect(.degrees(spinnerSpeed * 90))
+              }
+              .frame(width: minWidthHeight, height: minWidthHeight)  //
               #if os(visionOS)
                 .offset(x: labelKind == .iconOnly ? 0 : 2)  // there's a weird visual offset without this
               #endif
-          } else if isBusy {
-            Image(systemName: "progress.indicator")
-              .mButtonIconModifiers(minWidthHeight, isBusy, spinnerSpeed)  //
-              #if os(visionOS)
-                .offset(x: 2)  // there's a weird visual offset without this
-              #endif
           }
         }
-        .mButtonLabelModifiers(kind, paddingSize, buttonSize, cornerRadius)
+        .if(kind != .automatic) { view in
+          view.padding(.horizontal, paddingSize.x)  //
+            .padding(.vertical, paddingSize.y)  //
+            .frame(minWidth: buttonSize.width, minHeight: buttonSize.height)  //
+            .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
+        }
         .if(labelKind == .iconOnly) { view in view.labelStyle(.iconOnly) }
         // TODO: ↓ This doesn't work because we use `mButtonIconModifiers`, but other attempts at making the icon rotate continuously all failed...
         .contentTransition(.symbolEffect(.replace))
@@ -161,50 +168,6 @@ public struct MButton: View {
       .disabled(isDisabled)
     } else {
       EmptyView()
-    }
-  }
-}
-
-@MainActor extension Image {
-  @ViewBuilder fileprivate func mButtonIconModifiers(
-    _ minWidthHeight: CGFloat,
-    _ isBusy: Bool,
-    _ spinnerSpeed: Double
-  ) -> some View {
-    if isBusy {
-      self  // TODO: without `.fontWeight(.medium)` for some reason the icon does not animate
-        .resizable().aspectRatio(contentMode: .fit).fontWeight(.medium)  //
-        .symbolEffect(.rotate.wholeSymbol, options: .repeat(.continuous))  //
-        .rotationEffect(.degrees(spinnerSpeed * 90))  //
-        .frame(width: minWidthHeight, height: minWidthHeight)  //
-    } else {
-      self.resizable().aspectRatio(contentMode: .fit).fontWeight(.medium)  //
-        .frame(width: minWidthHeight, height: minWidthHeight)  //
-    }
-  }
-}
-
-extension View {
-  @ViewBuilder func `if`<Content: View>(
-    _ condition: Bool,
-    transform: (Self) -> Content
-  ) -> some View { if condition { transform(self) } else { self } }
-}
-
-@MainActor extension Label {
-  @ViewBuilder fileprivate func mButtonLabelModifiers(
-    _ kind: ButtonKind,
-    _ paddingSize: (x: CGFloat, y: CGFloat),
-    _ buttonSize: CGSize,
-    _ cornerRadius: CGFloat
-  ) -> some View {
-    switch kind {
-    case .primary, .secondary, .text, .textPrimary:
-      self.padding(.horizontal, paddingSize.x)  //
-        .padding(.vertical, paddingSize.y)  //
-        .frame(minWidth: buttonSize.width, minHeight: buttonSize.height)  //
-        .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
-    case .automatic: self
     }
   }
 }

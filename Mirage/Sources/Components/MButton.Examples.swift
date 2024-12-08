@@ -99,7 +99,7 @@ public struct MButton_Examples: View {
             action: onTap,
             kind: .primary,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
@@ -115,7 +115,7 @@ public struct MButton_Examples: View {
           MButton(
             action: onTap,
             kind: .primary,
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
@@ -126,40 +126,40 @@ public struct MButton_Examples: View {
             action: onTap,
             kind: .primary,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             isBusy: true
           )
           MButton(action: onTap, kind: .primary, label: "click me", isBusy: true)
-          MButton(action: onTap, kind: .primary, icon: "figure.stand", isBusy: true)
+          MButton(action: onTap, kind: .primary, icon: "play.fill", isBusy: true)
         }
         VStack {
           MButton(
             action: onTap,
             kind: .primary,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: true
           )
           MButton(action: onTap, kind: .primary, label: "click me", isActive: true)
-          MButton(action: onTap, kind: .primary, icon: "figure.stand", isActive: true)
+          MButton(action: onTap, kind: .primary, icon: "play.fill", isActive: true)
         }
         VStack {
           MButton(
             action: onTap,
             kind: .primary,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             tint: .green
           )
           MButton(action: onTap, kind: .primary, label: "click me", isActive: true, tint: .green)
-          MButton(action: onTap, kind: .primary, icon: "figure.stand", tint: .green)
+          MButton(action: onTap, kind: .primary, icon: "play.fill", tint: .green)
         }
         VStack {
           MButton(
             action: onTap,
             kind: .primary,
             label: "Submit uploaded files and folder to server",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
@@ -182,7 +182,7 @@ public struct MButton_Examples: View {
           MButton(
             action: onTap,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
@@ -196,32 +196,32 @@ public struct MButton_Examples: View {
           )
           MButton(
             action: onTap,
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
           )
         }
         VStack {
-          MButton(action: onTap, label: "click me", icon: "figure.stand", isBusy: true)
+          MButton(action: onTap, label: "click me", icon: "play.fill", isBusy: true)
           MButton(action: onTap, label: "click me", isBusy: true)
-          MButton(action: onTap, icon: "figure.stand", isBusy: true)
+          MButton(action: onTap, icon: "play.fill", isBusy: true)
         }
         VStack {
-          MButton(action: onTap, label: "click me", icon: "figure.stand", isActive: true)
+          MButton(action: onTap, label: "click me", icon: "play.fill", isActive: true)
           MButton(action: onTap, label: "click me", isActive: true)
-          MButton(action: onTap, icon: "figure.stand", isActive: true)
+          MButton(action: onTap, icon: "play.fill", isActive: true)
         }
         VStack {
-          MButton(action: onTap, label: "click me", icon: "figure.stand", tint: .green)
+          MButton(action: onTap, label: "click me", icon: "play.fill", tint: .green)
           MButton(action: onTap, label: "click me", isActive: true, tint: .green)
-          MButton(action: onTap, icon: "figure.stand", tint: .green)
+          MButton(action: onTap, icon: "play.fill", tint: .green)
         }
         VStack {
           MButton(
             action: onTap,
             label: "Submit uploaded files and folder to server",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
@@ -244,7 +244,7 @@ public struct MButton_Examples: View {
             action: onTap,
             kind: .text,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
@@ -260,39 +260,39 @@ public struct MButton_Examples: View {
           MButton(
             action: onTap,
             kind: .text,
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
           )
         }
         VStack {
-          MButton(action: onTap, kind: .text, label: "click me", icon: "figure.stand", isBusy: true)
+          MButton(action: onTap, kind: .text, label: "click me", icon: "play.fill", isBusy: true)
           MButton(action: onTap, kind: .text, label: "click me", isBusy: true)
-          MButton(action: onTap, kind: .text, icon: "figure.stand", isBusy: true)
+          MButton(action: onTap, kind: .text, icon: "play.fill", isBusy: true)
         }
         VStack {
           MButton(
             action: onTap,
             kind: .text,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: true
           )
           MButton(action: onTap, kind: .text, label: "click me", isActive: true)
-          MButton(action: onTap, kind: .text, icon: "figure.stand", isActive: true)
+          MButton(action: onTap, kind: .text, icon: "play.fill", isActive: true)
         }
         VStack {
-          MButton(action: onTap, kind: .text, label: "click me", icon: "figure.stand", tint: .green)
+          MButton(action: onTap, kind: .text, label: "click me", icon: "play.fill", tint: .green)
           MButton(action: onTap, kind: .text, label: "click me", isActive: true, tint: .green)
-          MButton(action: onTap, kind: .text, icon: "figure.stand", tint: .green)
+          MButton(action: onTap, kind: .text, icon: "play.fill", tint: .green)
         }
         VStack {
           MButton(
             action: onTap,
             kind: .text,
             label: "Submit uploaded files and folder to server",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
@@ -317,7 +317,7 @@ public struct MButton_Examples: View {
             action: onTap,
             kind: .automatic,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
@@ -333,7 +333,7 @@ public struct MButton_Examples: View {
           MButton(
             action: onTap,
             kind: .automatic,
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
@@ -344,40 +344,40 @@ public struct MButton_Examples: View {
             action: onTap,
             kind: .automatic,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             isBusy: true
           )
           MButton(action: onTap, kind: .automatic, label: "click me", isBusy: true)
-          MButton(action: onTap, kind: .automatic, icon: "figure.stand", isBusy: true)
+          MButton(action: onTap, kind: .automatic, icon: "play.fill", isBusy: true)
         }
         VStack(spacing: Space.md) {
           MButton(
             action: onTap,
             kind: .automatic,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: true
           )
           MButton(action: onTap, kind: .automatic, label: "click me", isActive: true)
-          MButton(action: onTap, kind: .automatic, icon: "figure.stand", isActive: true)
+          MButton(action: onTap, kind: .automatic, icon: "play.fill", isActive: true)
         }
         VStack(spacing: Space.md) {
           MButton(
             action: onTap,
             kind: .automatic,
             label: "click me",
-            icon: "figure.stand",
+            icon: "play.fill",
             tint: .green
           )
           MButton(action: onTap, kind: .automatic, label: "click me", isActive: true, tint: .green)
-          MButton(action: onTap, kind: .automatic, icon: "figure.stand", tint: .green)
+          MButton(action: onTap, kind: .automatic, icon: "play.fill", tint: .green)
         }
         VStack(spacing: Space.md) {
           MButton(
             action: onTap,
             kind: .automatic,
             label: "Submit uploaded files and folder to server",
-            icon: "figure.stand",
+            icon: "play.fill",
             isActive: isActive,
             isBusy: isBusy,
             isDisabled: isDisabled
