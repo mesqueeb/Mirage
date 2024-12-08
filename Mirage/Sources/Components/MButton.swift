@@ -63,7 +63,7 @@ public struct MButton: View {
   /// State for spinner speed, sped up when tapping the button if busy
   @State private var spinnerSpeed: Double = 0
 
-  private var color: Color { return tint ?? Color.accentColor }
+  private var accentColor: Color { return tint ?? Color.accentColor }
   private var labelKind: LabelKind {
     return iconOnly ? .iconOnly : icon != nil ? .labelAndIcon : .labelOnly
   }
@@ -151,15 +151,22 @@ public struct MButton: View {
         // TODO: ↓ This doesn't work because we use `mButtonIconModifiers`, but other attempts at making the icon rotate continuously all failed...
         .contentTransition(.symbolEffect(.replace))
       }
-      .mButtonModifiers(
-        kind,
-        labelKind,
-        buttonSize,
-        cornerRadius,
-        color,
-        isActive: isActive,
-        isHovering: isHovering
-      )
+      // Button base
+      .if(kind != .automatic) { view in
+        view.buttonStyle(PlainButtonStyle())  //
+          .applyButtonFrame(buttonSize)  //
+      }
+      // Button colors
+      .mButtonColorModifiers(kind, accentColor, isHovering: isHovering)  //
+      // Button outer clip
+      .if(kind != .automatic) { view in
+        view.clipShape(RoundedRectangle(cornerRadius: cornerRadius))  //
+          .activeOutline(
+            isActive,
+            accentColor,
+            shape: RoundedRectangle(cornerRadius: cornerRadius + 2)
+          )
+      }
       .onHover { isHovering in withAnimation { self.isHovering = isHovering } }  //
       #if os(macOS)
         // it's not always clear without this on macOS
@@ -172,50 +179,31 @@ public struct MButton: View {
   }
 }
 
-@MainActor extension Button {
-  @ViewBuilder fileprivate func mButtonModifiers(
+@MainActor extension View {
+  @ViewBuilder fileprivate func mButtonColorModifiers(
     _ kind: ButtonKind,
-    _ labelKind: LabelKind,
-    _ buttonSize: CGSize,
-    _ cornerRadius: CGFloat,
-    _ color: Color,
-    isActive: Bool,
+    _ accentColor: Color,
     isHovering: Bool
   ) -> some View {
     switch kind {
     case .primary:
-      self.buttonStyle(PlainButtonStyle())  //
-        .applyButtonFrame(buttonSize)  //
-        .foregroundStyle(Color.white)  //
-        .background(color.opacity(isHovering ? 0.8 : 1.0))  //
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))  //
-        .activeOutline(isActive, color, shape: RoundedRectangle(cornerRadius: cornerRadius + 2))
-
+      self.foregroundStyle(Color.white)  //
+        .background(accentColor.opacity(isHovering ? 0.8 : 1.0))  //
     case .secondary:
-      self.buttonStyle(PlainButtonStyle())  //
-        .applyButtonFrame(buttonSize)  //
-        .foregroundStyle(Color.primary)  //
+      self.foregroundStyle(Color.primary)  //
         .background(
-          color.opacity(
+          accentColor.opacity(
             OS == .visionOS
               ? 0.4  // background a bit less opaque on visionOS
               : isHovering ? 0.35 : 0.2  // background quite opaque on the rest
           )
         )
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))  //
-        .activeOutline(isActive, color, shape: RoundedRectangle(cornerRadius: cornerRadius + 2))
-
     case .text, .textPrimary:
-      self.buttonStyle(PlainButtonStyle())  //
-        .applyButtonFrame(buttonSize)  //
-        .foregroundStyle(
-          OS == .visionOS || kind == .text
-            ? Color.primary.opacity(isHovering ? 0.8 : 1.0)  // always use primary color on visionOS and text kind
-            : color.opacity(isHovering ? 0.8 : 1.0)  // use accentColor for textPrimary on the rest
-        )
-        .clipShape(RoundedRectangle(cornerRadius: cornerRadius))  //
-        .activeOutline(isActive, color, shape: RoundedRectangle(cornerRadius: cornerRadius + 2))
-
+      self.foregroundStyle(
+        OS == .visionOS || kind == .text
+          ? Color.primary.opacity(isHovering ? 0.8 : 1.0)  // always use primary color on visionOS and text kind
+          : accentColor.opacity(isHovering ? 0.8 : 1.0)  // use accentColor for textPrimary on the rest
+      )
     case .automatic: self
     }
   }
