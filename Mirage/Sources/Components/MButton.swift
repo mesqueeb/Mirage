@@ -267,7 +267,7 @@ extension View {
       self.padding(-12)  //
         .frame(minWidth: buttonSize.width - 12, minHeight: buttonSize.height - 12)
     #else
-      .frame(minWidth: buttonSize.width, minHeight: buttonSize.height)
+      self.frame(minWidth: buttonSize.width, minHeight: buttonSize.height)
     #endif
   }
 }
