@@ -75,10 +75,13 @@ public struct MButton: View {
     }
   }
   private var defaultPadding: CGFloat {
-    if OS == .visionOS && labelKind == .iconOnly { return Space.sm * 2.5 }
+    if OS == .visionOS && labelKind == .iconOnly { return Space.sm * 2 }
     return Space.sm * sizeModifier
   }
-  private var minWidthHeight: CGFloat { Space.lg * sizeModifier }
+  private var minWidthHeight: CGFloat {
+    if labelKind == .iconOnly { return Space.md * sizeModifier }
+    return Space.lg * sizeModifier
+  }
   private var paddingSize: (x: CGFloat, y: CGFloat) {
     let x =
       switch labelKind {
@@ -91,10 +94,7 @@ public struct MButton: View {
   }
   private var labelSize: CGSize {
     let width =
-      switch labelKind {
-      case .labelAndIcon, .labelOnly: 100 * sizeModifier
-      case .iconOnly: minWidthHeight
-      }
+      if label == nil || labelKind == .iconOnly { minWidthHeight } else { 100 * sizeModifier }
     return CGSize(width: width, height: minWidthHeight)
   }
   /// labelSize + padding
