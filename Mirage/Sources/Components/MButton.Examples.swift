@@ -1,5 +1,69 @@
 import SwiftUI
 
+/// A helper subview that generates a row of icon-only MButtons from a given icon array.
+struct IconButtonRow: View {
+  let icons: [String]
+  let action: () -> Void
+  let kind: ButtonKind
+  let isActive: Bool
+  let isBusy: Bool
+  let isDisabled: Bool
+  let tint: Color?
+
+  init(
+    icons: [String],
+    action: @escaping () -> Void,
+    kind: ButtonKind = .primary,
+    isActive: Bool = false,
+    isBusy: Bool = false,
+    isDisabled: Bool = false,
+    tint: Color? = nil
+  ) {
+    self.icons = icons
+    self.action = action
+    self.kind = kind
+    self.isActive = isActive
+    self.isBusy = isBusy
+    self.isDisabled = isDisabled
+    self.tint = tint
+  }
+
+  var body: some View {
+    VStack(spacing: Space.md) {
+      HStack(spacing: Space.md) {
+        ForEach(icons[0 ..< 6], id: \.self) { icon in
+          MButton(
+            action: action,
+            iconOnly: true,
+            kind: kind,
+            label: "click me",
+            icon: icon,
+            isActive: isActive,
+            isBusy: isBusy,
+            isDisabled: isDisabled,
+            tint: tint
+          )
+        }
+      }
+      HStack(spacing: Space.md) {
+        ForEach(icons[6 ..< icons.count], id: \.self) { icon in
+          MButton(
+            action: action,
+            iconOnly: true,
+            kind: kind,
+            label: "click me",
+            icon: icon,
+            isActive: isActive,
+            isBusy: isBusy,
+            isDisabled: isDisabled,
+            tint: tint
+          )
+        }
+      }
+    }
+  }
+}
+
 public struct MButton_Examples: View {
   let onTap: () -> Void
 
@@ -8,6 +72,11 @@ public struct MButton_Examples: View {
   @State var isActive = false
   @State var isBusy = false
   @State var isDisabled = false
+
+  let icons: [String] = [
+    "xmark", "house.fill", "plus", "trash", "pencil", "heart", "gear", "magnifyingglass", "star",
+    "bookmark", "square.and.arrow.up", "ellipsis",
+  ]
 
   public var body: some View {
     Grid(horizontalSpacing: Space.md) {
@@ -61,12 +130,7 @@ public struct MButton_Examples: View {
             isBusy: true
           )
           MButton(action: onTap, kind: .primary, label: "click me", isBusy: true)
-          MButton(
-            action: onTap,
-            kind: .primary,
-            icon: "figure.stand",
-            isBusy: true
-          )
+          MButton(action: onTap, kind: .primary, icon: "figure.stand", isBusy: true)
         }
         VStack {
           MButton(
@@ -77,12 +141,7 @@ public struct MButton_Examples: View {
             isActive: true
           )
           MButton(action: onTap, kind: .primary, label: "click me", isActive: true)
-          MButton(
-            action: onTap,
-            kind: .primary,
-            icon: "figure.stand",
-            isActive: true
-          )
+          MButton(action: onTap, kind: .primary, icon: "figure.stand", isActive: true)
         }
         VStack {
           MButton(
@@ -93,12 +152,7 @@ public struct MButton_Examples: View {
             tint: .green
           )
           MButton(action: onTap, kind: .primary, label: "click me", isActive: true, tint: .green)
-          MButton(
-            action: onTap,
-            kind: .primary,
-            icon: "figure.stand",
-            tint: .green
-          )
+          MButton(action: onTap, kind: .primary, icon: "figure.stand", tint: .green)
         }
         VStack {
           MButton(
@@ -149,32 +203,17 @@ public struct MButton_Examples: View {
           )
         }
         VStack {
-          MButton(
-            action: onTap,
-            label: "click me",
-            icon: "figure.stand",
-            isBusy: true
-          )
+          MButton(action: onTap, label: "click me", icon: "figure.stand", isBusy: true)
           MButton(action: onTap, label: "click me", isBusy: true)
           MButton(action: onTap, icon: "figure.stand", isBusy: true)
         }
         VStack {
-          MButton(
-            action: onTap,
-            label: "click me",
-            icon: "figure.stand",
-            isActive: true
-          )
+          MButton(action: onTap, label: "click me", icon: "figure.stand", isActive: true)
           MButton(action: onTap, label: "click me", isActive: true)
           MButton(action: onTap, icon: "figure.stand", isActive: true)
         }
         VStack {
-          MButton(
-            action: onTap,
-            label: "click me",
-            icon: "figure.stand",
-            tint: .green
-          )
+          MButton(action: onTap, label: "click me", icon: "figure.stand", tint: .green)
           MButton(action: onTap, label: "click me", isActive: true, tint: .green)
           MButton(action: onTap, icon: "figure.stand", tint: .green)
         }
@@ -228,20 +267,9 @@ public struct MButton_Examples: View {
           )
         }
         VStack {
-          MButton(
-            action: onTap,
-            kind: .text,
-            label: "click me",
-            icon: "figure.stand",
-            isBusy: true
-          )
+          MButton(action: onTap, kind: .text, label: "click me", icon: "figure.stand", isBusy: true)
           MButton(action: onTap, kind: .text, label: "click me", isBusy: true)
-          MButton(
-            action: onTap,
-            kind: .text,
-            icon: "figure.stand",
-            isBusy: true
-          )
+          MButton(action: onTap, kind: .text, icon: "figure.stand", isBusy: true)
         }
         VStack {
           MButton(
@@ -252,28 +280,12 @@ public struct MButton_Examples: View {
             isActive: true
           )
           MButton(action: onTap, kind: .text, label: "click me", isActive: true)
-          MButton(
-            action: onTap,
-            kind: .text,
-            icon: "figure.stand",
-            isActive: true
-          )
+          MButton(action: onTap, kind: .text, icon: "figure.stand", isActive: true)
         }
         VStack {
-          MButton(
-            action: onTap,
-            kind: .text,
-            label: "click me",
-            icon: "figure.stand",
-            tint: .green
-          )
+          MButton(action: onTap, kind: .text, label: "click me", icon: "figure.stand", tint: .green)
           MButton(action: onTap, kind: .text, label: "click me", isActive: true, tint: .green)
-          MButton(
-            action: onTap,
-            kind: .text,
-            icon: "figure.stand",
-            tint: .green
-          )
+          MButton(action: onTap, kind: .text, icon: "figure.stand", tint: .green)
         }
         VStack {
           MButton(
@@ -336,12 +348,7 @@ public struct MButton_Examples: View {
             isBusy: true
           )
           MButton(action: onTap, kind: .automatic, label: "click me", isBusy: true)
-          MButton(
-            action: onTap,
-            kind: .automatic,
-            icon: "figure.stand",
-            isBusy: true
-          )
+          MButton(action: onTap, kind: .automatic, icon: "figure.stand", isBusy: true)
         }
         VStack(spacing: Space.md) {
           MButton(
@@ -352,12 +359,7 @@ public struct MButton_Examples: View {
             isActive: true
           )
           MButton(action: onTap, kind: .automatic, label: "click me", isActive: true)
-          MButton(
-            action: onTap,
-            kind: .automatic,
-            icon: "figure.stand",
-            isActive: true
-          )
+          MButton(action: onTap, kind: .automatic, icon: "figure.stand", isActive: true)
         }
         VStack(spacing: Space.md) {
           MButton(
@@ -368,12 +370,7 @@ public struct MButton_Examples: View {
             tint: .green
           )
           MButton(action: onTap, kind: .automatic, label: "click me", isActive: true, tint: .green)
-          MButton(
-            action: onTap,
-            kind: .automatic,
-            icon: "figure.stand",
-            tint: .green
-          )
+          MButton(action: onTap, kind: .automatic, icon: "figure.stand", tint: .green)
         }
         VStack(spacing: Space.md) {
           MButton(
@@ -396,6 +393,52 @@ public struct MButton_Examples: View {
           )
           .frame(maxWidth: 240)
         }
+      }
+    }
+
+    MHorizontalRule(width: .infinity)
+
+    Grid(horizontalSpacing: Space.md) {
+      GridRow {
+        VStack {
+          Toggle("Active", isOn: $isActive)
+          Toggle("Busy", isOn: $isBusy)
+          Toggle("Disabled", isOn: $isDisabled)
+        }
+        .gridCellColumns(2)
+        Text("isBusy")
+        Text("isActive")
+        Text("tint")
+        Text("long label")
+      }
+      GridRow {
+        Text("Primary")  // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .primary, isActive: isActive, isBusy: isBusy, isDisabled: isDisabled) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .primary, isBusy: true) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .primary, isActive: true) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .primary, tint: .green) // swift-format-ignore
+      }
+      GridRow {
+        Text("Secondary")  // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .secondary, isActive: isActive, isBusy: isBusy, isDisabled: isDisabled) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .secondary, isBusy: true) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .secondary, isActive: true) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .secondary, tint: .green) // swift-format-ignore
+      }
+      GridRow {
+        Text("Text")  // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .text, isActive: isActive, isBusy: isBusy, isDisabled: isDisabled) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .text, isBusy: true) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .text, isActive: true) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .text, tint: .green) // swift-format-ignore
+      }
+      GridRow { MHorizontalRule(width: .infinity).frame(height: 24).gridCellColumns(6) }
+      GridRow {
+        Text("Automatic")  // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .automatic, isActive: isActive, isBusy: isBusy, isDisabled: isDisabled) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .automatic, isBusy: true) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .automatic, isActive: true) // swift-format-ignore
+        IconButtonRow(icons: icons, action: onTap, kind: .automatic, tint: .green) // swift-format-ignore
       }
     }
   }
