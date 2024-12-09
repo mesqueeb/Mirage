@@ -105,6 +105,17 @@ public struct MButton: View {
     )
   }
 
+  /// Without ofsetting the text slightly on the y axis, to me it doesn't truly feel like the icon and text are centered...
+  var yTextOffset: CGFloat {
+    return if icon == nil && !isBusy { 0 } else {
+      switch OS {
+      case .visionOS: -1.5
+      case .iOS: -0.5
+      case .macOS: -0.5
+      }
+    }
+  }
+
   public var body: some View {
     if isShown {
       Button {
@@ -117,12 +128,12 @@ public struct MButton: View {
       } label: {
         Label {
           if let label {
-            if iconOnly {
-              Text(label)
-            } else {
-              Text(label).multilineTextAlignment(.center)
-                .frame(minWidth: minWidthHeight, minHeight: minWidthHeight)
-            }
+            Text(label)
+              .if(labelKind != .iconOnly) { view in
+                view.offset(y: yTextOffset)  // this makes the text a bit better centered imo
+                  .frame(minWidth: minWidthHeight, minHeight: minWidthHeight)
+                  .multilineTextAlignment(.center)
+              }
           }
         } icon: {
           if let iconName = isBusy ? "progress.indicator" : icon {
