@@ -1,6 +1,6 @@
 {
   "name": "Mirage",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "bump": "np --no-cleanup --no-publish",
