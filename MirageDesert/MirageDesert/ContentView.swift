@@ -36,7 +36,7 @@ struct ContentView: View {
   }
 
   @State private var component: MirageComponent? = .MButton
-  @State private var useScrollView: Bool = false
+  @State private var useScrollView: Bool = true
 
   var body: some View {
     TabView {

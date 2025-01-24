@@ -33,6 +33,7 @@ public struct MButton: View {
   let isBusy: Bool
   let isDisabled: Bool
   let tint: SwiftUI.Color?
+  let width: CGFloat?
 
   public init(
     if isShown: Bool = true,
@@ -44,7 +45,8 @@ public struct MButton: View {
     isActive: Bool = false,
     isBusy: Bool = false,
     isDisabled: Bool = false,
-    tint: SwiftUI.Color? = nil
+    tint: SwiftUI.Color? = nil,
+    width: CGFloat? = nil
   ) {
     self.isShown = isShown
     self.action = action
@@ -56,6 +58,7 @@ public struct MButton: View {
     self.isBusy = isBusy
     self.isDisabled = isDisabled
     self.tint = tint
+    self.width = width
   }
 
   /// for tinting the background colour on macOS only
@@ -98,14 +101,14 @@ public struct MButton: View {
     return CGSize(width: width, height: minWidthHeight)
   }
   /// labelSize + padding
-  private var buttonSize: CGSize {
+  private var buttonDimensions: CGSize {
     return CGSize(
       width: labelSize.width + paddingSize.x * 2,
       height: labelSize.height + paddingSize.y * 2
     )
   }
 
-  /// Without ofsetting the text slightly on the y axis, to me it doesn't truly feel like the icon and text are centered...
+  /// Without offsetting the text slightly on the y axis, to me it doesn't truly feel like the icon and text are centered...
   var yTextOffset: CGFloat {
     return if icon == nil && !isBusy { 0 } else {
       switch OS {
@@ -153,9 +156,9 @@ public struct MButton: View {
           }
         }
         .if(kind != .automatic) { view in
-          view.padding(.horizontal, paddingSize.x)  //
-            .padding(.vertical, paddingSize.y)  //
-            .frame(minWidth: buttonSize.width, minHeight: buttonSize.height)  //
+          view.padding(.horizontal, paddingSize.x).padding(.vertical, paddingSize.y)
+            // apply frame both on inner and outer layer so the entire button is tappable
+            .applyButtonFrame(buttonDimensions, width: width)
             .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
         }
         .if(labelKind == .iconOnly) { view in view.labelStyle(.iconOnly) }
@@ -165,13 +168,15 @@ public struct MButton: View {
       // Button base
       .if(kind != .automatic) { view in
         view.buttonStyle(PlainButtonStyle())  //
-          .applyButtonFrame(buttonSize)  //
+          // apply frame both on inner and outer layer so the entire button is tappable
+          .if(OS == .visionOS) { view in view.padding(-12) }
+          .applyButtonFrame(buttonDimensions, width: width, modifier: -12)
       }
       // Button colors
-      .mButtonColorModifiers(kind, accentColor, isHovering: isHovering)  //
-      // Button outer clip
+      .mButtonColorModifiers(kind, accentColor, isHovering: isHovering)
       .if(kind != .automatic) { view in
-        view.clipShape(RoundedRectangle(cornerRadius: cornerRadius))  //
+        // Button outer clip
+        view.clipShape(RoundedRectangle(cornerRadius: cornerRadius))
           .activeOutline(
             isActive,
             accentColor,
@@ -199,7 +204,7 @@ public struct MButton: View {
     switch kind {
     case .primary:
       self.foregroundStyle(Color.white)  //
-        .background(accentColor.opacity(isHovering ? 0.8 : 1.0))  //
+        .background(accentColor.opacity(isHovering ? 0.8 : 1.0))
     case .secondary:
       self.foregroundStyle(Color.primary)  //
         .background(
@@ -223,14 +228,36 @@ public struct MButton: View {
 @MainActor extension View {
   /// the button won't respect the inner label's min height/width in a constraint View so
   /// we need an extra frame on the outer button
-  @ViewBuilder fileprivate func applyButtonFrame(_ buttonSize: CGSize) -> some View {
-    #if os(visionOS)
-      // negative padding is to make the hover spotlight look nicely
-      self.padding(-12)  //
-        .frame(minWidth: buttonSize.width - 12, minHeight: buttonSize.height - 12)
-    #else
-      self.frame(minWidth: buttonSize.width, minHeight: buttonSize.height)
-    #endif
+  @ViewBuilder fileprivate func applyButtonFrame(
+    _ buttonDimensions: CGSize,
+    width: CGFloat?,
+    // on visionOS we pass negative padding is to make the hover spotlight look nicely on visionOS
+    modifier: CGFloat = 0
+  ) -> some View {
+    switch width {
+    // No width provided -> use your computed default, but keep that as a strict minWidth
+    case .none:
+      self.frame(
+        minWidth: buttonDimensions.width + modifier,
+        minHeight: buttonDimensions.height + modifier
+      )
+    // .infinity -> expand to fill parent
+    case .some(let w) where w.isInfinite:
+      self.frame(
+        minWidth: 0,
+        maxWidth: .infinity,
+        minHeight: buttonDimensions.height + modifier,
+        alignment: .center
+      )
+    // Finite width -> exact fixed width
+    case .some(let w):
+      self.frame(
+        minWidth: w + modifier,
+        maxWidth: w + modifier,
+        minHeight: buttonDimensions.height + modifier,
+        alignment: .center
+      )
+    }
   }
 }
 
@@ -265,8 +292,7 @@ extension View {
 }
 
 #Preview(traits: .sizeThatFitsLayout) {
-  MButton_Examples(onTap: { print("clicked") }).padding()
-
+  MButton_Examples(onTap: { print("clicked") }).padding()  //
     #if os(iOS)
       .padding(.bottom, 350)
     #elseif os(visionOS)
