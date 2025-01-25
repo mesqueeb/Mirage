@@ -34,6 +34,7 @@ public struct MButton: View {
   let isDisabled: Bool
   let tint: SwiftUI.Color?
   let width: CGFloat?
+  let height: CGFloat?
 
   public init(
     if isShown: Bool = true,
@@ -46,7 +47,8 @@ public struct MButton: View {
     isBusy: Bool = false,
     isDisabled: Bool = false,
     tint: SwiftUI.Color? = nil,
-    width: CGFloat? = nil
+    width: CGFloat? = nil,
+    height: CGFloat? = nil
   ) {
     self.isShown = isShown
     self.action = action
@@ -59,6 +61,7 @@ public struct MButton: View {
     self.isDisabled = isDisabled
     self.tint = tint
     self.width = width
+    self.height = height
   }
 
   /// for tinting the background colour on macOS only
@@ -158,7 +161,7 @@ public struct MButton: View {
         .if(kind != .automatic) { view in
           view.padding(.horizontal, paddingSize.x).padding(.vertical, paddingSize.y)
             // apply frame both on inner and outer layer so the entire button is tappable
-            .applyButtonFrame(buttonDimensions, width: width)
+            .applyButtonFrame(buttonDimensions, width: width, height: height)
             .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
         }
         .if(labelKind == .iconOnly) { view in view.labelStyle(.iconOnly) }
@@ -170,7 +173,7 @@ public struct MButton: View {
         view.buttonStyle(PlainButtonStyle())  //
           // apply frame both on inner and outer layer so the entire button is tappable
           .if(OS == .visionOS) { view in view.padding(-12) }
-          .applyButtonFrame(buttonDimensions, width: width, modifier: -12)
+          .applyButtonFrame(buttonDimensions, width: width, height: height, modifier: -12)
       }
       // Button colors
       .mButtonColorModifiers(kind, accentColor, isHovering: isHovering)
@@ -229,35 +232,53 @@ public struct MButton: View {
   /// the button won't respect the inner label's min height/width in a constraint View so
   /// we need an extra frame on the outer button
   @ViewBuilder fileprivate func applyButtonFrame(
+    /// button defaults
     _ buttonDimensions: CGSize,
+    /// passed width
     width: CGFloat?,
+    /// passed height
+    height: CGFloat?,
     // on visionOS we pass negative padding is to make the hover spotlight look nicely on visionOS
     modifier: CGFloat = 0
   ) -> some View {
-    switch width {
-    // No width provided -> use your computed default, but keep that as a strict minWidth
-    case .none:
-      self.frame(
-        minWidth: buttonDimensions.width + modifier,
-        minHeight: buttonDimensions.height + modifier
-      )
-    // .infinity -> expand to fill parent
-    case .some(let w) where w.isInfinite:
-      self.frame(
-        minWidth: 0,
-        maxWidth: .infinity,
-        minHeight: buttonDimensions.height + modifier,
-        alignment: .center
-      )
-    // Finite width -> exact fixed width
-    case .some(let w):
-      self.frame(
-        minWidth: w + modifier,
-        maxWidth: w + modifier,
-        minHeight: buttonDimensions.height + modifier,
-        alignment: .center
-      )
-    }
+    // Compute (minWidth, maxWidth)
+    let (minWidth, maxWidth): (CGFloat?, CGFloat?) = {
+      switch width {
+      case .none:
+        // No width provided -> use the computed default as a strict minimum
+        return (buttonDimensions.width + modifier, nil)
+      case .some(let w) where w.isInfinite:
+        // .infinity -> expand to fill parent
+        return (0, .infinity)
+      case .some(let w):
+        // Finite width -> exact fixed width
+        return (w + modifier, w + modifier)
+      }
+    }()
+
+    // Compute (minHeight, maxHeight)
+    let (minHeight, maxHeight): (CGFloat?, CGFloat?) = {
+      switch height {
+      case .none:
+        // No height provided -> use the computed default as a strict minimum
+        return (buttonDimensions.height + modifier, nil)
+      case .some(let h) where h.isInfinite:
+        // .infinity -> expand to fill parent vertically
+        return (0, .infinity)
+      case .some(let h):
+        // Finite height -> exact fixed height
+        return (h + modifier, h + modifier)
+      }
+    }()
+
+    // Finally, apply all at once
+    self.frame(
+      minWidth: minWidth,
+      maxWidth: maxWidth,
+      minHeight: minHeight,
+      maxHeight: maxHeight,
+      alignment: .center
+    )
   }
 }
 

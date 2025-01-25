@@ -250,18 +250,39 @@ public struct MButton_Examples: View {
 
     MHorizontalRule(width: .infinity)
 
+    Text("Width")
+
     VStack(spacing: Space.md) {
       MButton(action: onTap, label: "Regular Button")  // this button will have its default minWidth applied
       MButton(action: onTap, label: "Fixed at 500px width Button", width: 500)  // this button will be 500px wide
-      MButton(action: onTap, label: "Full width Button", width: .infinity)  // this button will be 600px wide
+      MButton(action: onTap, label: "Full width Button", width: .infinity)  // this button will grow until its parent frame
     }
     .frame(width: 600).border(.brown, width: 1).padding()
 
     VStack(spacing: Space.md) {
       MButton(action: onTap, label: "Regular Button")  // this button will extrude
       MButton(action: onTap, label: "Fixed at 500px width Button", width: 500)  // this button will extrude
-      MButton(action: onTap, label: "Full width Button", width: .infinity)  // this button will be 100px wide
+      MButton(action: onTap, label: "Full width Button", width: .infinity)  // this button will shrink until its parent frame
     }
     .frame(width: 70).border(.brown, width: 1).padding()
+
+    MHorizontalRule(width: .infinity)
+
+    Text("Height")
+
+    HStack(spacing: Space.md) {
+      MButton(action: onTap, label: "Regular Button")  // this button will have its default height applied
+      MButton(action: onTap, label: "Fixed at 40px", height: 40)  // this button will have its height fixed at 40px
+      MButton(action: onTap, label: "Full height Button", height: .infinity)  // this button will grow until its parent frame
+    }
+    .frame(height: 60).border(.brown, width: 1).padding()
+
+    HStack(spacing: Space.md) {
+      MButton(action: onTap, label: "Regular Button")  // this button will have its default height applied
+      MButton(action: onTap, label: "Fixed at 40px", height: 40)  // this button will have its height fixed at 40px
+      MButton(action: onTap, label: "Full height Button", height: .infinity)  // this button will shrink until its parent frame
+    }
+    .frame(height: 10).border(.brown, width: 1).padding()
+
   }
 }
