@@ -22,7 +22,7 @@ fileprivate let sizeModifier: CGFloat =
   case .macOS: 0.75
   }
 
-public struct MButton: View {
+public struct MButton<Content: View>: View {
   let isShown: Bool
   let action: () -> Void
   let iconOnly: Bool
@@ -35,6 +35,7 @@ public struct MButton: View {
   let tint: SwiftUI.Color?
   let width: CGFloat?
   let height: CGFloat?
+  let extraContent: () -> Content
 
   public init(
     if isShown: Bool = true,
@@ -48,7 +49,8 @@ public struct MButton: View {
     isDisabled: Bool = false,
     tint: SwiftUI.Color? = nil,
     width: CGFloat? = nil,
-    height: CGFloat? = nil
+    height: CGFloat? = nil,
+    @ViewBuilder extraContent: @escaping () -> Content = { EmptyView() }
   ) {
     self.isShown = isShown
     self.action = action
@@ -62,6 +64,7 @@ public struct MButton: View {
     self.tint = tint
     self.width = width
     self.height = height
+    self.extraContent = extraContent
   }
 
   /// for tinting the background colour on macOS only
@@ -132,31 +135,35 @@ public struct MButton: View {
           self.action()
         }
       } label: {
-        Label {
-          if let label {
-            Text(label)
-              .if(labelKind != .iconOnly) { view in
-                view.offset(y: yTextOffset)  // this makes the text a bit better centered imo
-                  .frame(minWidth: minWidthHeight, minHeight: minWidthHeight)
-                  .multilineTextAlignment(.center)
-              }
+        HStack {
+          Label {
+            if let label {
+              Text(label)
+                .if(labelKind != .iconOnly) { view in
+                  view.offset(y: yTextOffset)  // this makes the text a bit better centered imo
+                    .frame(minWidth: minWidthHeight, minHeight: minWidthHeight)
+                    .multilineTextAlignment(.center)
+                }
+            }
+          } icon: {
+            if let iconName = isBusy ? "progress.indicator" : icon {
+              Image(systemName: iconName)
+                .if(labelKind == .iconOnly) { view in
+                  view.resizable().aspectRatio(contentMode: .fit)
+                }
+                // without `.fontWeight(.medium)` for some reason the icon does not animate
+                .fontWeight(.medium)  //
+                .if(isBusy) { view in
+                  view.symbolEffect(.rotate.wholeSymbol, options: .repeat(.continuous))
+                    .rotationEffect(.degrees(spinnerSpeed * 90))
+                }
+                .frame(width: minWidthHeight, height: minWidthHeight)  //
+                #if os(visionOS)
+                  .offset(x: labelKind == .iconOnly ? 0 : 2)  // there's a weird visual offset without this
+                #endif
+            }
           }
-        } icon: {
-          if let iconName = isBusy ? "progress.indicator" : icon {
-            Image(systemName: iconName)
-              .if(labelKind == .iconOnly) { view in view.resizable().aspectRatio(contentMode: .fit)
-              }
-              // without `.fontWeight(.medium)` for some reason the icon does not animate
-              .fontWeight(.medium)  //
-              .if(isBusy) { view in
-                view.symbolEffect(.rotate.wholeSymbol, options: .repeat(.continuous))
-                  .rotationEffect(.degrees(spinnerSpeed * 90))
-              }
-              .frame(width: minWidthHeight, height: minWidthHeight)  //
-              #if os(visionOS)
-                .offset(x: labelKind == .iconOnly ? 0 : 2)  // there's a weird visual offset without this
-              #endif
-          }
+          extraContent().offset(y: yTextOffset)  // this makes the text a bit better centered imo
         }
         .if(kind != .automatic) { view in
           view.padding(.horizontal, paddingSize.x).padding(.vertical, paddingSize.y)

@@ -167,7 +167,7 @@ public struct MButton_Examples: View {
         }
       }
 
-      GridRow { MHorizontalRule(width: .infinity).frame(height: 24).gridCellColumns(6) }
+      GridRow { MHorizontalRule().frame(height: 24).gridCellColumns(6) }
 
       // swift-format-ignore
       GridRow {
@@ -201,7 +201,7 @@ public struct MButton_Examples: View {
       }
     }
 
-    MHorizontalRule(width: .infinity)
+    MHorizontalRule()
 
     // swift-format-ignore
     Grid(horizontalSpacing: Space.md) {
@@ -238,7 +238,7 @@ public struct MButton_Examples: View {
         IconButtonRow(icons: icons, action: onTap, kind: .text, isActive: true)
         IconButtonRow(icons: icons, action: onTap, kind: .text, tint: .green)
       }
-      GridRow { MHorizontalRule(width: .infinity).frame(height: 24).gridCellColumns(6) }
+      GridRow { MHorizontalRule().frame(height: 24).gridCellColumns(6) }
       GridRow {
         Text("Automatic")
         IconButtonRow(icons: icons, action: onTap, kind: .automatic, isActive: isActive, isBusy: isBusy, isDisabled: isDisabled)
@@ -248,7 +248,7 @@ public struct MButton_Examples: View {
       }
     }
 
-    MHorizontalRule(width: .infinity)
+    MHorizontalRule()
 
     Text("Width")
 
@@ -266,7 +266,7 @@ public struct MButton_Examples: View {
     }
     .frame(width: 70).border(.brown, width: 1).padding()
 
-    MHorizontalRule(width: .infinity)
+    MHorizontalRule()
 
     Text("Height")
 
@@ -283,6 +283,17 @@ public struct MButton_Examples: View {
       MButton(action: onTap, label: "Full height Button", height: .infinity)  // this button will shrink until its parent frame
     }
     .frame(height: 10).border(.brown, width: 1).padding()
+
+    MHorizontalRule()
+
+    Text("Slot")
+
+    HStack(spacing: Space.md) {
+      MButton(action: onTap, label: "SharePlay", icon: "shareplay", isActive: true, tint: .green) {
+        Image(systemName: "chevron.right").opacity(0.6)
+      }
+      MButton(action: onTap, label: "SharePlay", icon: "shareplay", isActive: true, tint: .green)
+    }
 
   }
 }
