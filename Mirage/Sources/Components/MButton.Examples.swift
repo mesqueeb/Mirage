@@ -1,5 +1,22 @@
 import SwiftUI
 
+fileprivate enum OperatingSystem: String, Codable, Sendable { case visionOS, macOS, iOS }
+
+#if os(visionOS)
+  fileprivate let OS = OperatingSystem.visionOS
+#elseif os(macOS)
+  fileprivate let OS = OperatingSystem.macOS
+#elseif os(iOS)
+  fileprivate let OS = OperatingSystem.iOS
+#endif
+
+fileprivate let sharePlayButtonSizeModifier: CGFloat =
+  switch OS {
+  case .visionOS: 1.5
+  case .iOS: 1
+  case .macOS: 1
+  }
+
 /// A helper subview that generates a row of icon-only MButtons from a given icon array.
 struct IconButtonRow: View {
   let icons: [String]
@@ -58,6 +75,8 @@ public struct MButton_Examples: View {
     "xmark", "house.fill", "plus", "trash", "pencil", "heart", "gear", "magnifyingglass", "star",
     "bookmark", "square.and.arrow.up", "ellipsis",
   ]
+
+  @State var popoverShown = false
 
   public var body: some View {
     Grid(horizontalSpacing: Space.md) {
@@ -283,6 +302,40 @@ public struct MButton_Examples: View {
       MButton(action: onTap, label: "Full height Button", height: .infinity)  // this button will shrink until its parent frame
     }
     .frame(height: 10).border(.brown, width: 1).padding()
+
+    MButton(
+      action: { popoverShown.toggle() },
+      label: "Tap to see Popover",
+      width: .infinity,
+      height: 48
+    )
+    .popover(isPresented: $popoverShown) {
+      VStack(spacing: Space.md) {
+        Text("Sharing MirageDesert").font(.title3).fontWeight(.semibold)
+
+        MHorizontalRule().opacity(0.33)
+
+        VStack(spacing: Space.sm) {
+          MButton(
+            action: onTap,
+            kind: .secondary,
+            label: "End for Everyone",
+            width: .infinity,
+            height: 48 * sharePlayButtonSizeModifier
+          )
+          .fontWeight(.semibold)
+          MButton(
+            action: onTap,
+            kind: .secondary,
+            label: "End Only for Me",
+            width: .infinity,
+            height: 48 * sharePlayButtonSizeModifier
+          )
+          .fontWeight(.semibold)
+        }
+      }
+      .padding()
+    }
 
     MHorizontalRule()
 
