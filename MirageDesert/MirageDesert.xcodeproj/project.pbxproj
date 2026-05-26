@@ -101,7 +101,7 @@
 			mainGroup = F7872D1A2CEACA88003129AC;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F7872D462CEAD252003129AC /* XCLocalSwiftPackageReference "../Mirage" */,
+				F7872D462CEAD252003129AC /* XCLocalSwiftPackageReference ".." */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F7872D242CEACA88003129AC /* Products */;
@@ -350,9 +350,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		F7872D462CEAD252003129AC /* XCLocalSwiftPackageReference "../Mirage" */ = {
+		F7872D462CEAD252003129AC /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Mirage;
+			relativePath = ..;
 		};
 /* End XCLocalSwiftPackageReference section */
 
