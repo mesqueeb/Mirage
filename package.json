@@ -20,5 +20,6 @@
     "url": "https://github.com/mesqueeb/Mirage.git"
   },
   "homepage": "https://github.com/mesqueeb/Mirage#readme",
-  "bugs": "https://github.com/mesqueeb/Mirage/issues"
+  "bugs": "https://github.com/mesqueeb/Mirage/issues",
+  "packageManager": "pnpm@11.3.0"
 }
