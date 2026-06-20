@@ -24,7 +24,10 @@ fileprivate let sizeModifier: CGFloat =
 
 public struct MButton<Content: View>: View {
   let isShown: Bool
-  let action: () -> Void
+  /// Synchronous tap handler. `nil` when an async action was supplied instead.
+  let action: (() -> Void)?
+  /// Asynchronous tap handler. While it runs, the button drives the spinner automatically.
+  let asyncAction: (() async -> Void)?
   let iconOnly: Bool
   let kind: ButtonKind
   let label: LocalizedStringResource?
@@ -54,6 +57,40 @@ public struct MButton<Content: View>: View {
   ) {
     self.isShown = isShown
     self.action = action
+    self.asyncAction = nil
+    self.iconOnly = iconOnly
+    self.kind = kind
+    self.label = label
+    self.icon = icon
+    self.isActive = isActive
+    self.isBusy = isBusy
+    self.isDisabled = isDisabled
+    self.tint = tint
+    self.width = width
+    self.height = height
+    self.extraContent = extraContent
+  }
+
+  /// Async variant: while `action` is running the button shows the busy spinner automatically.
+  /// The explicit `isBusy` flag still forces the busy state on top of the automatic one.
+  public init(
+    if isShown: Bool = true,
+    action: @escaping () async -> Void,
+    iconOnly: Bool = false,
+    kind: ButtonKind = .secondary,
+    label: LocalizedStringResource? = nil,
+    icon: String? = nil,
+    isActive: Bool = false,
+    isBusy: Bool = false,
+    isDisabled: Bool = false,
+    tint: SwiftUI.Color? = nil,
+    width: CGFloat? = nil,
+    height: CGFloat? = nil,
+    @ViewBuilder extraContent: @escaping () -> Content = { EmptyView() }
+  ) {
+    self.isShown = isShown
+    self.action = nil
+    self.asyncAction = action
     self.iconOnly = iconOnly
     self.kind = kind
     self.label = label
@@ -71,6 +108,11 @@ public struct MButton<Content: View>: View {
   @State private var isHovering = false
   /// State for spinner speed, sped up when tapping the button if busy
   @State private var spinnerSpeed: Double = 0
+  /// `true` while the async action is executing; combined with `isBusy` to drive the spinner.
+  @State private var isRunningAsync = false
+
+  /// The effective busy state: explicit `isBusy` prop OR an in-flight async action.
+  private var effectiveIsBusy: Bool { isBusy || isRunningAsync }
 
   private var accentColor: Color { return tint ?? Color.accentColor }
   private var labelKind: LabelKind {
@@ -116,7 +158,7 @@ public struct MButton<Content: View>: View {
 
   /// Without offsetting the text slightly on the y axis, to me it doesn't truly feel like the icon and text are centered...
   var yTextOffset: CGFloat {
-    return if icon == nil && !isBusy { 0 } else {
+    return if icon == nil && !effectiveIsBusy { 0 } else {
       switch OS {
       case .visionOS: -1.5
       case .iOS: -0.5
@@ -128,11 +170,18 @@ public struct MButton<Content: View>: View {
   public var body: some View {
     if isShown {
       Button {
-        if isBusy {
+        if effectiveIsBusy {
           // Accelerate the spinner instead of executing the action
           withAnimation(.easeIn(duration: 0.5)) { spinnerSpeed += 1 }
+        } else if let asyncAction {
+          // Drive the busy spinner automatically for the duration of the async action
+          Task {
+            isRunningAsync = true
+            defer { isRunningAsync = false }
+            await asyncAction()
+          }
         } else {
-          self.action()
+          self.action?()
         }
       } label: {
         HStack {
@@ -146,14 +195,14 @@ public struct MButton<Content: View>: View {
                 }
             }
           } icon: {
-            if let iconName = isBusy ? "progress.indicator" : icon {
+            if let iconName = effectiveIsBusy ? "progress.indicator" : icon {
               Image(systemName: iconName)
                 .if(labelKind == .iconOnly) { view in
                   view.resizable().aspectRatio(contentMode: .fit)
                 }
                 // without `.fontWeight(.medium)` for some reason the icon does not animate
                 .fontWeight(.medium)  //
-                .if(isBusy) { view in
+                .if(effectiveIsBusy) { view in
                   view.symbolEffect(.rotate.wholeSymbol, options: .repeat(.continuous))
                     .rotationEffect(.degrees(spinnerSpeed * 90))
                 }
