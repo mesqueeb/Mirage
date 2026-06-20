@@ -348,5 +348,16 @@ public struct MButton_Examples: View {
       MButton(action: onTap, label: "SharePlay", icon: "shareplay", isActive: true, tint: .green)
     }
 
+    MHorizontalRule()
+
+    Text("Async (tap to see the automatic spinner)")
+
+    // The async action drives the busy spinner automatically for its full duration.
+    HStack(spacing: Space.md) {
+      MButton(action: { try? await Task.sleep(for: .seconds(2)) }, kind: .primary, label: "Save", icon: "play.fill")
+      MButton(action: { try? await Task.sleep(for: .seconds(2)) }, label: "Save")
+      MButton(action: { try? await Task.sleep(for: .seconds(2)) }, icon: "play.fill")
+    }
+
   }
 }
