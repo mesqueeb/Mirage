@@ -339,6 +339,20 @@ public struct MButton_Examples: View {
 
     MHorizontalRule()
 
+    Text("Help (hover the buttons)")
+
+    HStack(spacing: Space.md) {
+      MButton(action: onTap, label: "Enabled", help: "This button is ready")
+      MButton(
+        action: onTap,
+        label: "Disabled",
+        isDisabled: true,
+        help: "Complete all required fields first"
+      )
+    }
+
+    MHorizontalRule()
+
     Text("Slot")
 
     HStack(spacing: Space.md) {

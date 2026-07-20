@@ -35,6 +35,7 @@ public struct MButton<Content: View>: View {
   let isActive: Bool
   let isBusy: Bool
   let isDisabled: Bool
+  let help: LocalizedStringResource?
   let tint: SwiftUI.Color?
   let width: CGFloat?
   let height: CGFloat?
@@ -50,6 +51,7 @@ public struct MButton<Content: View>: View {
     isActive: Bool = false,
     isBusy: Bool = false,
     isDisabled: Bool = false,
+    help: LocalizedStringResource? = nil,
     tint: SwiftUI.Color? = nil,
     width: CGFloat? = nil,
     height: CGFloat? = nil,
@@ -65,6 +67,7 @@ public struct MButton<Content: View>: View {
     self.isActive = isActive
     self.isBusy = isBusy
     self.isDisabled = isDisabled
+    self.help = help
     self.tint = tint
     self.width = width
     self.height = height
@@ -83,6 +86,7 @@ public struct MButton<Content: View>: View {
     isActive: Bool = false,
     isBusy: Bool = false,
     isDisabled: Bool = false,
+    help: LocalizedStringResource? = nil,
     tint: SwiftUI.Color? = nil,
     width: CGFloat? = nil,
     height: CGFloat? = nil,
@@ -98,6 +102,7 @@ public struct MButton<Content: View>: View {
     self.isActive = isActive
     self.isBusy = isBusy
     self.isDisabled = isDisabled
+    self.help = help
     self.tint = tint
     self.width = width
     self.height = height
@@ -170,7 +175,9 @@ public struct MButton<Content: View>: View {
   public var body: some View {
     if isShown {
       Button {
-        if effectiveIsBusy {
+        if isDisabled {
+          return
+        } else if effectiveIsBusy {
           // Accelerate the spinner instead of executing the action
           withAnimation(.easeIn(duration: 0.5)) { spinnerSpeed += 1 }
         } else if let asyncAction {
@@ -229,10 +236,15 @@ public struct MButton<Content: View>: View {
         view.buttonStyle(PlainButtonStyle())  //
           // apply frame both on inner and outer layer so the entire button is tappable
           .if(OS == .visionOS) { view in view.padding(-12) }
-          .applyButtonFrame(buttonDimensions, width: width, height: height, modifier: -12)
+          .applyButtonFrame(
+            buttonDimensions,
+            width: width,
+            height: height,
+            modifier: OS == .visionOS ? -12 : 0
+          )
       }
       // Button colors
-      .mButtonColorModifiers(kind, accentColor, isHovering: isHovering)
+      .mButtonColorModifiers(kind, accentColor, isHovering: isHovering && !isDisabled)
       .if(kind != .automatic) { view in
         // Button outer clip
         view.clipShape(RoundedRectangle(cornerRadius: cornerRadius))
@@ -247,9 +259,40 @@ public struct MButton<Content: View>: View {
         // it's not always clear without this on macOS
         .opacity(isDisabled ? 0.8 : 1.0)
       #endif
-      .disabled(isDisabled)
+      #if os(visionOS)
+        .saturation(isDisabled ? 0 : 1)
+        .opacity(isDisabled ? 0.5 : 1)
+      #else
+        .disabled(isDisabled)
+      #endif
+      .mButtonHelp(help, isDisabled: isDisabled)
     } else {
       EmptyView()
+    }
+  }
+}
+
+@MainActor extension View {
+  @ViewBuilder fileprivate func mButtonHelp(
+    _ help: LocalizedStringResource?,
+    isDisabled: Bool
+  ) -> some View {
+    if let help {
+      #if os(visionOS)
+        self.help(help)
+      #else
+        if isDisabled {
+          self.overlay {
+            Color.clear
+              .contentShape(Rectangle())
+              .help(help)
+          }
+        } else {
+          self.help(help)
+        }
+      #endif
+    } else {
+      self
     }
   }
 }
