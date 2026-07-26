@@ -16,6 +16,7 @@ public struct MActionButton: Identifiable {
   public var isActive: Bool
   public var isBusy: Bool
   public var isDisabled: Bool
+  public var help: LocalizedStringResource?
   public var id: UUID
 
   public init(
@@ -26,6 +27,7 @@ public struct MActionButton: Identifiable {
     isActive: Bool = false,
     isBusy: Bool = false,
     isDisabled: Bool = false,
+    help: LocalizedStringResource? = nil,
     id: UUID = UUID()
   ) {
     self.action = action
@@ -35,6 +37,7 @@ public struct MActionButton: Identifiable {
     self.isActive = isActive
     self.isBusy = isBusy
     self.isDisabled = isDisabled
+    self.help = help
     self.id = id
   }
 }
@@ -58,7 +61,8 @@ public struct MActionButtons: View {
           icon: actionButton.icon,
           isActive: actionButton.isActive,
           isBusy: actionButton.isBusy,
-          isDisabled: actionButton.isDisabled
+          isDisabled: actionButton.isDisabled,
+          help: actionButton.help
         )
         .id(actionButton.id)
       }
