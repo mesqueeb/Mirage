@@ -3,7 +3,7 @@ import Mirage
 import AVFoundation
 
 public enum MirageComponent: String, Codable, CaseIterable, Identifiable, Hashable {
-  case MButton, MActionButtons, MLink, MHorizontalRule, Typography
+  case MButton, MShareButton, MActionButtons, MLink, MHorizontalRule, Typography
 
   public var id: String { self.rawValue }
 }
@@ -51,6 +51,7 @@ struct ContentView: View {
             VStack {
               switch component {
               case .MButton: MButton_Examples(onTap: playMouseClick)
+              case .MShareButton: MShareButton_Examples()
               case .MActionButtons: MActionButtons_Examples(onTap: playMouseClick)
               case .MLink: MLink_Examples()
               case .MHorizontalRule: MHorizontalRule_Examples()

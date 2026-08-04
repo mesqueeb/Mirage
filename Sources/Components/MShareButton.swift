@@ -90,15 +90,4 @@ public struct MShareButton<
   }
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
-  MShareButton(
-    item: URL(string: "https://example.com")!,
-    preview: SharePreview("Example"),
-    iconOnly: true,
-    kind: .text,
-    label: "Share",
-    icon: "square.and.arrow.up",
-    help: "Share"
-  )
-  .padding()
-}
+#Preview(traits: .sizeThatFitsLayout) { MShareButton_Examples().padding() }

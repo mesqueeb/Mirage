@@ -7,7 +7,10 @@ import Testing
 @MainActor struct MShareButtonTests {
   @Test func initializerStoresTheMButtonPresentationProperties() {
     let button = MShareButton(
+      if: false,
       item: URL(string: "https://example.com")!,
+      subject: Text("Example subject"),
+      message: Text("Example message"),
       preview: SharePreview("Example"),
       iconOnly: true,
       kind: .text,
@@ -21,6 +24,9 @@ import Testing
       height: 44
     )
 
+    #expect(!button.isShown)
+    #expect(button.subject != nil)
+    #expect(button.message != nil)
     #expect(button.iconOnly)
     #expect(button.kind == .text)
     #expect(button.icon == "square.and.arrow.up")

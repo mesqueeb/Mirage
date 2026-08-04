@@ -12,6 +12,6 @@ let package = Package(
       name: "Mirage",
       path: "Sources",
       swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
-    )
+    ), .testTarget(name: "MirageTests", dependencies: ["Mirage"], path: "Tests"),
   ]
 )
