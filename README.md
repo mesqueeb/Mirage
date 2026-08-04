@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://swiftpackageindex.com/mesqueeb/Mirage/documentation">
-    <img alt="logo" src="./MirageDesert/MirageDesert/Assets.xcassets/AppIcon.appiconset/MirageDesert_macOS.png" width="160" style="" />
+    <img alt="logo" src="./MirageDesert/MirageDesert/Assets.xcassets/AppIcon.appiconset/MirageDesert.png" width="160" style="" />
   </a>
 </p>
 
