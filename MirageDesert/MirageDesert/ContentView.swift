@@ -4,6 +4,7 @@ import AVFoundation
 
 public enum MirageComponent: String, Codable, CaseIterable, Identifiable, Hashable {
   case MButton, MShareButton, MActionButtons, MLink, MHorizontalRule, Typography
+  case spinnerStress = "Spinner Stress"
 
   public var id: String { self.rawValue }
 }
@@ -38,7 +39,17 @@ struct ContentView: View {
   @State private var component: MirageComponent? = .MButton
   @State private var useScrollView: Bool = true
 
-  var body: some View {
+  @ViewBuilder private var content: some View {
+    if CommandLine.arguments.contains("--spinner-stress-demo") {
+      SpinnerStressDemo()
+    } else {
+      componentGallery
+    }
+  }
+
+  var body: some View { content }
+
+  private var componentGallery: some View {
     TabView {
       Tab("Components", systemImage: "square.grid.2x2") {
         NavigationSplitView {
@@ -56,6 +67,7 @@ struct ContentView: View {
               case .MLink: MLink_Examples()
               case .MHorizontalRule: MHorizontalRule_Examples()
               case .Typography: Typography_Examples()
+              case .spinnerStress: SpinnerStressDemo()
               case .none: Text("Select a component to see examples")
               }
             }

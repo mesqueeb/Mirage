@@ -81,7 +81,7 @@ public struct MShareButton<
   public var body: some View {
     if isShown {
       ShareLink(item: item, subject: subject, message: message, preview: preview) {
-        presentation.label(extraContent: extraContent)
+        presentation.label(spinnerRotation: 0, isHovering: isHovering, extraContent: extraContent)
       }
       .disabled(isDisabled).mButtonAppearance(presentation, isHovering: $isHovering)
     } else {

@@ -65,51 +65,37 @@ struct MButtonPresentation {
   private var buttonDimensions: CGSize {
     CGSize(width: labelSize.width + paddingSize.x * 2, height: labelSize.height + paddingSize.y * 2)
   }
-  private var yTextOffset: CGFloat {
-    if icon == nil && !isBusy { return 0 }
-    return switch mButtonOS {
-    case .visionOS: -1.5
-    case .iOS, .macOS: -0.5
-    }
-  }
 
   @MainActor @ViewBuilder func label<Content: View>(
-    spinnerSpeed: Double = 0,
+    spinnerRotation: Double,
+    isHovering: Bool,
     @ViewBuilder extraContent: () -> Content
   ) -> some View {
-    HStack {
-      Label {
-        if let label {
-          Text(label)
-            .if(labelKind != .iconOnly) { view in
-              view.offset(y: yTextOffset).frame(minWidth: minWidthHeight, minHeight: minWidthHeight)
-                .multilineTextAlignment(.center)
-            }
-        }
-      } icon: {
-        if let iconName = isBusy ? "progress.indicator" : icon {
-          Image(systemName: iconName)
-            .if(labelKind == .iconOnly) { view in view.resizable().aspectRatio(contentMode: .fit) }
-            .fontWeight(.medium)  //
-            .if(isBusy) { view in
-              view.symbolEffect(.rotate.wholeSymbol, options: .repeat(.continuous))
-                .rotationEffect(.degrees(spinnerSpeed * 90))
-            }
-            .frame(width: minWidthHeight, height: minWidthHeight)  //
-            #if os(visionOS)
-              .offset(x: labelKind == .iconOnly ? 0 : 2)
-            #endif
-        }
+    HStack(alignment: .center) {
+      if isBusy {
+        ProgressView().tint(kind.colorForeground(accentColor, isHovering: isHovering))
+          .progressViewStyle(.circular).controlSize(.small)
+          .scaleEffect(mButtonOS == .macOS ? 1 : 1.25).rotationEffect(.degrees(spinnerRotation))
+          .frame(width: minWidthHeight, height: minWidthHeight)  //
+      } else if let icon {
+        Image(systemName: icon)
+          .if(labelKind == .iconOnly) { view in view.resizable().aspectRatio(contentMode: .fit) }
+          .fontWeight(.medium)  //
+          .frame(width: minWidthHeight, height: minWidthHeight)  //
       }
-      extraContent().offset(y: yTextOffset)
+      if labelKind != .iconOnly, let label {
+        Text(label).frame(minWidth: minWidthHeight, minHeight: minWidthHeight)
+          .multilineTextAlignment(.center)
+      }
+      extraContent()
     }
     .if(kind != .automatic) { view in
       view.padding(.horizontal, paddingSize.x).padding(.vertical, paddingSize.y)
         .applyMButtonFrame(buttonDimensions, width: width, height: height)
         .contentShape(RoundedRectangle(cornerRadius: cornerRadius))
     }
-    .if(labelKind == .iconOnly) { view in view.labelStyle(.iconOnly) }
     .contentTransition(.symbolEffect(.replace))
+    .accessibilityLabel(label ?? "", isEnabled: labelKind == .iconOnly && label != nil)
   }
 
   @MainActor @ViewBuilder func apply<Content: View>(
@@ -179,18 +165,11 @@ struct MButtonPresentation {
     isHovering: Bool
   ) -> some View {
     switch kind {
-    case .primary:
-      self.foregroundStyle(Color.white)  //
-        .background(accentColor.opacity(isHovering ? 0.8 : 1))
-    case .secondary:
-      self.foregroundStyle(Color.primary)  //
-        .background(accentColor.opacity(mButtonOS == .visionOS ? 0.4 : isHovering ? 0.35 : 0.2))
-    case .text, .textPrimary:
-      self.foregroundStyle(
-        mButtonOS == .visionOS || kind == .text
-          ? Color.primary.opacity(isHovering ? 0.8 : 1) : accentColor.opacity(isHovering ? 0.8 : 1)
-      )
-    case .automatic: self
+    case .primary, .secondary, .text, .textPrimary:
+      self.foregroundStyle(kind.colorForeground(accentColor, isHovering: isHovering))
+        .tint(kind.colorForeground(accentColor, isHovering: isHovering))
+        .background(kind.colorBackground(accentColor, isHovering: isHovering))
+    case .automatic: self.tint(kind.colorForeground(accentColor, isHovering: isHovering))
     }
   }
 

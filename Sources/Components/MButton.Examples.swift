@@ -114,6 +114,7 @@ public struct MButton_Examples: View {
         VStack {
           MButton(action: onTap, kind: .primary, label: "click me", icon: "play.fill", tint: .green)
           MButton(action: onTap, kind: .primary, label: "click me", isActive: true, tint: .green)
+          MButton(action: onTap, kind: .primary, label: "click me", isBusy: true, tint: .green)
           MButton(action: onTap, kind: .primary, icon: "play.fill", tint: .green)
         }
         VStack {
@@ -145,6 +146,7 @@ public struct MButton_Examples: View {
         VStack {
           MButton(action: onTap, label: "click me", icon: "play.fill", tint: .green)
           MButton(action: onTap, label: "click me", isActive: true, tint: .green)
+          MButton(action: onTap, label: "click me", isBusy: true, tint: .green)
           MButton(action: onTap, icon: "play.fill", tint: .green)
         }
         VStack {
@@ -176,6 +178,7 @@ public struct MButton_Examples: View {
         VStack {
           MButton(action: onTap, kind: .text, label: "click me", icon: "play.fill", tint: .green)
           MButton(action: onTap, kind: .text, label: "click me", isActive: true, tint: .green)
+          MButton(action: onTap, kind: .text, label: "click me", isBusy: true, tint: .green)
           MButton(action: onTap, kind: .text, icon: "play.fill", tint: .green)
         }
         VStack {
@@ -209,6 +212,7 @@ public struct MButton_Examples: View {
         VStack(spacing: Space.md) {
           MButton(action: onTap, kind: .automatic, label: "click me", icon: "play.fill", tint: .green)
           MButton(action: onTap, kind: .automatic, label: "click me", isActive: true, tint: .green)
+          MButton(action: onTap, kind: .automatic, label: "click me", isBusy: true, tint: .green)
           MButton(action: onTap, kind: .automatic, icon: "play.fill", tint: .green)
         }
         VStack(spacing: Space.md) {
@@ -368,7 +372,12 @@ public struct MButton_Examples: View {
 
     // The async action drives the busy spinner automatically for its full duration.
     HStack(spacing: Space.md) {
-      MButton(action: { try? await Task.sleep(for: .seconds(2)) }, kind: .primary, label: "Save", icon: "play.fill")
+      MButton(
+        action: { try? await Task.sleep(for: .seconds(2)) },
+        kind: .primary,
+        label: "Save",
+        icon: "play.fill"
+      )
       MButton(action: { try? await Task.sleep(for: .seconds(2)) }, label: "Save")
       MButton(action: { try? await Task.sleep(for: .seconds(2)) }, icon: "play.fill")
     }

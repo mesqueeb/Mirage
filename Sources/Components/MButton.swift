@@ -2,7 +2,36 @@ import SwiftUI
 
 public enum ButtonKind: String, Codable, Sendable {
   case primary, secondary, text, textPrimary, automatic
+
+  public func colorForeground(_ accentColor: Color, isHovering: Bool) -> Color {
+    switch self {
+    case .primary: .white
+    case .secondary: .primary
+    case .text: .primary.opacity(isHovering ? 0.8 : 1)
+    case .textPrimary:
+      #if os(visionOS)
+        (Color.primary).opacity(isHovering ? 0.8 : 1)
+      #else
+        (accentColor).opacity(isHovering ? 0.8 : 1)
+      #endif
+    case .automatic: accentColor
+    }
+  }
+
+  public func colorBackground(_ accentColor: Color, isHovering: Bool) -> Color {
+    switch self {
+    case .primary: accentColor.opacity(isHovering ? 0.8 : 1)
+    case .secondary:
+      #if os(visionOS)
+        accentColor.opacity(0.4)
+      #else
+        accentColor.opacity(isHovering ? 0.35 : 0.2)
+      #endif
+    case .text, .textPrimary, .automatic: .clear
+    }
+  }
 }
+
 public enum LabelKind: String, Codable, Sendable { case labelAndIcon, labelOnly, iconOnly }
 
 public struct MButton<Content: View>: View {
@@ -94,8 +123,7 @@ public struct MButton<Content: View>: View {
 
   /// for tinting the background colour on macOS only
   @State private var isHovering = false
-  /// State for spinner speed, sped up when tapping the button if busy
-  @State private var spinnerSpeed: Double = 0
+  @State private var spinnerRotation = 0.0
   /// `true` while the async action is executing; combined with `isBusy` to drive the spinner.
   @State private var isRunningAsync = false
 
@@ -124,8 +152,7 @@ public struct MButton<Content: View>: View {
         if isDisabled {
           return
         } else if effectiveIsBusy {
-          // Accelerate the spinner instead of executing the action
-          withAnimation(.easeIn(duration: 0.5)) { spinnerSpeed += 1 }
+          withAnimation(.linear(duration: 0.4)) { spinnerRotation += 360 }
         } else if let asyncAction {
           // Drive the busy spinner automatically for the duration of the async action
           Task {
@@ -137,7 +164,11 @@ public struct MButton<Content: View>: View {
           self.action?()
         }
       } label: {
-        presentation.label(spinnerSpeed: spinnerSpeed, extraContent: extraContent)
+        presentation.label(
+          spinnerRotation: spinnerRotation,
+          isHovering: isHovering,
+          extraContent: extraContent
+        )
       }
       .mButtonAppearance(presentation, isHovering: $isHovering)
     } else {
