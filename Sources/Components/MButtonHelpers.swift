@@ -22,6 +22,7 @@ struct MButtonPresentation {
   let kind: ButtonKind
   let label: LocalizedStringResource?
   let icon: String?
+  let iconRotationDegrees: Double
   let isActive: Bool
   let isBusy: Bool
   let isDisabled: Bool
@@ -81,6 +82,7 @@ struct MButtonPresentation {
         Image(systemName: icon)
           .if(labelKind == .iconOnly) { view in view.resizable().aspectRatio(contentMode: .fit) }
           .fontWeight(.medium)  //
+          .rotationEffect(.degrees(iconRotationDegrees))
           .frame(width: minWidthHeight, height: minWidthHeight)  //
       }
       if labelKind != .iconOnly, let label {

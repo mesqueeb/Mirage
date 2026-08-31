@@ -68,6 +68,7 @@ public struct MShareButton<
       kind: kind,
       label: label,
       icon: icon,
+      iconRotationDegrees: 0,
       isActive: isActive,
       isBusy: false,
       isDisabled: isDisabled,
