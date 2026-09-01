@@ -43,8 +43,7 @@ public struct MButton<Content: View>: View {
   let iconOnly: Bool
   let kind: ButtonKind
   let label: LocalizedStringResource?
-  let icon: String?
-  let iconRotationDegrees: Double
+  let icon: MIcon?
   let isActive: Bool
   let isBusy: Bool
   let isDisabled: Bool
@@ -60,8 +59,7 @@ public struct MButton<Content: View>: View {
     iconOnly: Bool = false,
     kind: ButtonKind = .secondary,
     label: LocalizedStringResource? = nil,
-    icon: String? = nil,
-    iconRotationDegrees: Double = 0,
+    icon: MIcon? = nil,
     isActive: Bool = false,
     isBusy: Bool = false,
     isDisabled: Bool = false,
@@ -78,7 +76,6 @@ public struct MButton<Content: View>: View {
     self.kind = kind
     self.label = label
     self.icon = icon
-    self.iconRotationDegrees = iconRotationDegrees
     self.isActive = isActive
     self.isBusy = isBusy
     self.isDisabled = isDisabled
@@ -97,8 +94,7 @@ public struct MButton<Content: View>: View {
     iconOnly: Bool = false,
     kind: ButtonKind = .secondary,
     label: LocalizedStringResource? = nil,
-    icon: String? = nil,
-    iconRotationDegrees: Double = 0,
+    icon: MIcon? = nil,
     isActive: Bool = false,
     isBusy: Bool = false,
     isDisabled: Bool = false,
@@ -115,7 +111,6 @@ public struct MButton<Content: View>: View {
     self.kind = kind
     self.label = label
     self.icon = icon
-    self.iconRotationDegrees = iconRotationDegrees
     self.isActive = isActive
     self.isBusy = isBusy
     self.isDisabled = isDisabled
@@ -141,7 +136,6 @@ public struct MButton<Content: View>: View {
       kind: kind,
       label: label,
       icon: icon,
-      iconRotationDegrees: iconRotationDegrees,
       isActive: isActive,
       isBusy: effectiveIsBusy,
       isDisabled: isDisabled,

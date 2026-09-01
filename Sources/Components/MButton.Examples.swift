@@ -19,7 +19,7 @@ fileprivate let sharePlayButtonSizeModifier: CGFloat =
 
 /// A helper subview that generates a row of icon-only MButtons from a given icon array.
 struct IconButtonRow: View {
-  let icons: [String]
+  let icons: [MIcon]
   let action: () -> Void
   let kind: ButtonKind
   let isActive: Bool
@@ -28,7 +28,7 @@ struct IconButtonRow: View {
   let tint: Color?
 
   init(
-    icons: [String],
+    icons: [MIcon],
     action: @escaping () -> Void,
     kind: ButtonKind = .primary,
     isActive: Bool = false,
@@ -71,7 +71,7 @@ public struct MButton_Examples: View {
   @State var isBusy = false
   @State var isDisabled = false
 
-  let icons: [String] = [
+  let icons: [MIcon] = [
     "xmark", "house.fill", "plus", "trash", "pencil", "heart", "gear", "magnifyingglass", "star",
     "bookmark", "square.and.arrow.up", "ellipsis",
   ]

@@ -21,8 +21,7 @@ struct MButtonPresentation {
   let iconOnly: Bool
   let kind: ButtonKind
   let label: LocalizedStringResource?
-  let icon: String?
-  let iconRotationDegrees: Double
+  let icon: MIcon?
   let isActive: Bool
   let isBusy: Bool
   let isDisabled: Bool
@@ -79,10 +78,11 @@ struct MButtonPresentation {
           .scaleEffect(mButtonOS == .macOS ? 1 : 1.25).rotationEffect(.degrees(spinnerRotation))
           .frame(width: minWidthHeight, height: minWidthHeight)  //
       } else if let icon {
-        Image(systemName: icon)
+        Image(systemName: icon.systemName)
           .if(labelKind == .iconOnly) { view in view.resizable().aspectRatio(contentMode: .fit) }
           .fontWeight(.medium)  //
-          .rotationEffect(.degrees(iconRotationDegrees))
+          .rotationEffect(.degrees(icon.rotationDegrees))
+          .scaleEffect(x: icon.isMirroredHorizontally ? -1 : 1)
           .frame(width: minWidthHeight, height: minWidthHeight)  //
       }
       if labelKind != .iconOnly, let label {

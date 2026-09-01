@@ -12,8 +12,7 @@ public struct MActionButton: Identifiable {
   public var action: (DismissFn?) -> Void
   public var kind: ButtonKind
   public var label: LocalizedStringResource?
-  public var icon: String?
-  public var iconRotationDegrees: Double
+  public var icon: MIcon?
   public var isActive: Bool
   public var isBusy: Bool
   public var isDisabled: Bool
@@ -24,8 +23,7 @@ public struct MActionButton: Identifiable {
     action: @escaping (DismissFn?) -> Void,
     kind: ButtonKind = .automatic,
     label: LocalizedStringResource? = nil,
-    icon: String? = nil,
-    iconRotationDegrees: Double = 0,
+    icon: MIcon? = nil,
     isActive: Bool = false,
     isBusy: Bool = false,
     isDisabled: Bool = false,
@@ -36,7 +34,6 @@ public struct MActionButton: Identifiable {
     self.kind = kind
     self.label = label
     self.icon = icon
-    self.iconRotationDegrees = iconRotationDegrees
     self.isActive = isActive
     self.isBusy = isBusy
     self.isDisabled = isDisabled
@@ -62,7 +59,6 @@ public struct MActionButtons: View {
           kind: actionButton.kind,
           label: actionButton.label,
           icon: actionButton.icon,
-          iconRotationDegrees: actionButton.iconRotationDegrees,
           isActive: actionButton.isActive,
           isBusy: actionButton.isBusy,
           isDisabled: actionButton.isDisabled,

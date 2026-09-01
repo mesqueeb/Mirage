@@ -15,7 +15,7 @@ public struct MShareButton<
   let iconOnly: Bool
   let kind: ButtonKind
   let label: LocalizedStringResource?
-  let icon: String?
+  let icon: MIcon?
   let isActive: Bool
   let isDisabled: Bool
   let help: LocalizedStringResource?
@@ -33,7 +33,7 @@ public struct MShareButton<
     iconOnly: Bool = false,
     kind: ButtonKind = .secondary,
     label: LocalizedStringResource? = nil,
-    icon: String? = nil,
+    icon: MIcon? = nil,
     isActive: Bool = false,
     isDisabled: Bool = false,
     help: LocalizedStringResource? = nil,
@@ -68,7 +68,6 @@ public struct MShareButton<
       kind: kind,
       label: label,
       icon: icon,
-      iconRotationDegrees: 0,
       isActive: isActive,
       isBusy: false,
       isDisabled: isDisabled,
