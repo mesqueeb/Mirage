@@ -17,7 +17,7 @@ public struct MActionButton: Identifiable {
   public var isBusy: Bool
   public var isDisabled: Bool
   public var help: LocalizedStringResource?
-  public var id: UUID
+  public var id: String
 
   public init(
     action: @escaping (DismissFn?) -> Void,
@@ -28,7 +28,7 @@ public struct MActionButton: Identifiable {
     isBusy: Bool = false,
     isDisabled: Bool = false,
     help: LocalizedStringResource? = nil,
-    id: UUID = UUID()
+    id: String = UUID().uuidString
   ) {
     self.action = action
     self.kind = kind
